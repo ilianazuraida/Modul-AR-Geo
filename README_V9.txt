@@ -1,0 +1,1 @@
+V9: Reka bentuk tanpa gambar murid statik; kamera live sahaja; animasi POP, mod sentuhan, dan cabaran Belon Misteri dengan kod POP-182 dipulihkan. Pengesanan jari/tepukan kamera memerlukan HTTPS, internet dan ujian pada peranti sebenar. Buka index.html atau balloon-pop.html.

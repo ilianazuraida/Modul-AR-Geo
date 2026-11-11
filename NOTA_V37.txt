@@ -1,0 +1,1 @@
+V37: Susun atur berdasarkan koordinat ilustrasi pop-v24-clean.png. CSS versi lama yang saling menimpa dibuang; logik permainan dikekalkan. Buka balloon-pop.html. Kamera perlu diuji melalui HTTPS.

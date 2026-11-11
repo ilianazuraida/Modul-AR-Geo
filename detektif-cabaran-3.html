@@ -1,0 +1,113 @@
+<!doctype html><html lang="ms"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cabaran 3 — Galeri Poligon Berhantu</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+*{box-sizing:border-box}body{margin:0;background:#d8b9e1;color:#3d2848;font-family:'Comic Neue','Comic Sans MS',cursive;font-weight:700}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 16px;background:#fff4df}
+a,button{font:inherit;font-weight:700}a{color:#634187}
+.scene{max-width:1536px;position:relative;margin:auto;aspect-ratio:16/9;background:url('detektif-cabaran-3-galeri.jpg') center/100% 100% no-repeat}
+.hotspot{position:absolute;background:transparent;border:0;cursor:pointer;touch-action:manipulation}
+.hotspot:focus-visible{outline:3px solid #ffe771;border-radius:12px}
+#painting1{left:24.5%;top:28.5%;width:14%;height:27%}#painting2{left:40%;top:28.5%;width:14%;height:27%}#painting3{left:55.5%;top:28.5%;width:15%;height:27%}
+#door{left:76%;top:24%;width:23%;height:54%}#sound{left:87.5%;top:3%;width:5.5%;height:12%}#home{left:94%;top:3%;width:5.5%;height:12%}
+#status{background:#fff8e6;border:3px solid #ad82c1;border-radius:16px;margin:12px auto;padding:10px;text-align:center;max-width:900px}
+.overlay{position:fixed;inset:0;background:#271a36b9;display:none;align-items:center;justify-content:center;padding:14px;z-index:100}
+.overlay.open{display:flex}
+.dialog{background:#fff5df;border:5px solid #a776bd;border-radius:24px;max-width:750px;width:100%;max-height:94vh;overflow:auto;padding:20px;box-shadow:0 12px 30px #0005}
+.dialog h2{text-align:center;margin:4px 0 14px}.close{float:right;border:0;background:none;font-size:25px;cursor:pointer}
+button.choice,.primary{background:#8657ac;color:white;border:3px solid #f4d9a8;border-radius:14px;padding:10px 17px;cursor:pointer;margin:6px}
+button.choice:disabled{opacity:.5}
+#choices{text-align:center}#feedback{text-align:center;min-height:24px}
+.puzzle{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:16px 0}
+.slot{height:68px;border:2px solid #a17ab5;border-radius:12px;background:#e9d5f1;display:grid;place-items:center;font-size:25px}
+.slot.done{background:#d2eccd;border-color:#63a66a}
+.tiles{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+.tile{width:60px;height:60px;border:2px solid #9a6caf;background:#ffdf91;border-radius:10px;cursor:grab;touch-action:none;display:grid;place-items:center;font-size:27px;user-select:none}
+.tile.done{visibility:hidden}
+.ghost{position:fixed;z-index:500;pointer-events:none;transform:translate(-50%,-50%);opacity:.88}
+#reward{text-align:center}
+#reward svg{width:130px;height:130px}
+@media(max-width:650px){.slot{height:42px;font-size:18px}.tile{width:43px;height:43px;font-size:21px}.dialog{padding:12px}}
+
+.hept-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px;align-items:center}
+#hept-board{width:100%;max-width:330px;touch-action:none;filter:drop-shadow(0 4px 4px #0002)}
+.wedge-target{cursor:pointer;transition:filter .15s}.wedge-target:hover{filter:brightness(.92)}
+.hept-pieces{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;max-height:330px;overflow:auto}
+.hept-piece{width:100%;height:86px;background:#fff0d4;border:2px solid #b188c1;border-radius:12px;cursor:grab;touch-action:none;user-select:none;padding:0}
+.hept-piece svg{width:100%;height:100%}.hept-piece.done{opacity:.3;pointer-events:none}
+.hept-ghost{position:fixed!important;width:100px!important;height:100px!important;z-index:9999!important;pointer-events:none!important;transform:translate(-50%,-50%)}
+@media(max-width:600px){.hept-layout{grid-template-columns:1fr}.hept-pieces{grid-template-columns:repeat(4,1fr)}.hept-piece{height:60px}#hept-board{max-width:250px;margin:auto}}
+
+/* All seven draggable pieces are visible without scrolling. */
+.hept-pieces{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:repeat(2,82px)!important;max-height:none!important;overflow:visible!important;gap:8px!important}
+.hept-piece{height:82px!important;min-width:0!important;position:relative;z-index:2}
+.hept-piece:focus-visible{outline:3px solid #f4c15c}
+.hept-ghost{z-index:100000!important}
+@media(max-width:600px){.hept-layout{grid-template-columns:1fr}.hept-pieces{grid-template-rows:repeat(2,58px)!important}.hept-piece{height:58px!important}}
+</style></head><body>
+<header><b>🔎 Detektif Kod Poligon · Cabaran 3</b><a href="detektif-cabaran-2.html">← Bilik 2</a></header>
+<div class="scene" aria-label="Galeri Poligon Berhantu">
+<button class="hotspot" id="sound" aria-label="Bunyi" onclick="toggleSound()"></button>
+<button class="hotspot" id="home" aria-label="Halaman utama" onclick="location.href='detektif-kod-poligon.html'"></button>
+<button class="hotspot" id="painting1" aria-label="Periksa lukisan segi tiga" onclick="inspect(0)"></button>
+<button class="hotspot" id="painting2" aria-label="Periksa lukisan pentagon" onclick="inspect(1)"></button>
+<button class="hotspot" id="painting3" aria-label="Periksa lukisan heksagon" onclick="inspect(2)"></button>
+<button class="hotspot" id="door" aria-label="Periksa pintu rahsia" onclick="door()"></button>
+
+
+</div>
+<div id="status" role="status">Klik terus tiga lukisan untuk mencari petunjuk. Petunjuk: <span id="progress">0/3</span></div>
+<div class="overlay" id="overlay"><div class="dialog"><button class="close" aria-label="Tutup" onclick="closeDialog()">×</button><div id="content"></div></div></div>
+<script>
+const questions=[
+ {q:'Lukisan pertama menunjukkan segi tiga. Berapakah bilangan sisi lurusnya?',a:['3','4','5'],correct:0},
+ {q:'Lukisan kedua menunjukkan pentagon. Berapakah bilangan bucunya?',a:['4','5','6'],correct:1},
+ {q:'Lukisan ketiga menunjukkan heksagon. Berapakah bilangan sisi lurusnya?',a:['5','6','7'],correct:1}
+];
+const done=new Set(JSON.parse(sessionStorage.getItem('dkp3_clues')||'[]'));
+const placed=new Set(JSON.parse(sessionStorage.getItem('dkp3_tiles')||'[]'));
+const tileOrder=[4,1,6,2,0,5,3]; // shuffled, stable between re-renders
+let won=sessionStorage.getItem('dkp3_won')==='yes',active=-1;
+const $=id=>document.getElementById(id);
+function openDialog(markup){$('content').innerHTML=markup;$('overlay').classList.add('open')}
+function closeDialog(){$('overlay').classList.remove('open')}
+function progress(){$('progress').textContent=done.size+'/3';$('status').innerHTML=won?'🎉 Kod ketiga telah ditemui: <b>HEPTAGON</b>':done.size<3?'Klik lukisan untuk mencari petunjuk: <b>'+done.size+'/3</b>':'✓ Semua petunjuk ditemui! Klik pintu rahsia dan bina heptagon.'}
+
+function inspect(i){active=i;let p=questions[i];openDialog('<h2>🔍 Petunjuk '+(i+1)+'</h2><p style="text-align:center">'+p.q+'</p><div id="choices">'+p.a.map((x,j)=>'<button class="choice" onclick="answer('+j+')">'+x+'</button>').join('')+'</div><p id="feedback"></p>')}
+function answer(i){let p=questions[active];if(i!==p.correct){$('feedback').textContent='Belum tepat. Perhatikan sisi lurus atau bucu pada lukisan.';return}done.add(active);sessionStorage.setItem('dkp3_clues',JSON.stringify([...done]));$('feedback').textContent='✓ Betul! Petunjuk ditemui.';progress();setTimeout(closeDialog,650)}
+function door(){if(done.size<3){openDialog('<h2>🔐 Pintu Masih Berkunci</h2><p>Cari semua tiga petunjuk pada lukisan dahulu. Kemajuan: '+done.size+'/3.</p>');return}if(won){reward();return}puzzle()}
+function wedgePoints(i){const a=(2*Math.PI*i/7)-Math.PI/2,b=(2*Math.PI*(i+1)/7)-Math.PI/2;return `110,110 ${110+91*Math.cos(a)},${110+91*Math.sin(a)} ${110+91*Math.cos(b)},${110+91*Math.sin(b)}`}
+function wedgeSvg(i){return `<svg viewBox="0 0 220 220" aria-hidden="true"><polygon points="${wedgePoints(i)}" fill="${['#e7a8d1','#c4b6ef','#a7dbe8','#f6d48c','#b7dfaa','#f4bba2','#d9b2f0'][i]}" stroke="#74508d" stroke-width="3"/></svg>`}
+function puzzle(){
+ let slots=Array.from({length:7},(_,i)=>`<polygon class="wedge-target ${placed.has(i)?'filled':''}" data-slot="${i}" points="${wedgePoints(i)}" fill="${placed.has(i)?['#e7a8d1','#c4b6ef','#a7dbe8','#f6d48c','#b7dfaa','#f4bba2','#d9b2f0'][i]:'#f8e7ff'}" stroke="#875aa2" stroke-width="3" />`).join('');
+ openDialog(`<h2>🧩 Bina Heptagon!</h2><p style="text-align:center">Cantumkan <b>tujuh kepingan berbentuk segi tiga</b> menjadi satu heptagon. Kepingan telah diacak! Seret setiap kepingan ke ruang yang sepadan dengan warna dan bentuknya. Tujuh kepingan membentuk heptagon.</p><div class="hept-layout"><svg id="hept-board" viewBox="0 0 220 220" aria-label="Tujuh ruang puzzle membentuk heptagon">${slots}</svg><div class="hept-pieces" id="tiles">${tileOrder.map(i=>`<button class="hept-piece ${placed.has(i)?'done':''}" data-tile="${i}" aria-label="Kepingan ${i+1}" ${placed.has(i)?'disabled':''}>${wedgeSvg(i)}</button>`).join('')}</div></div><p id="feedback" role="status" style="text-align:center">Kepingan dipasang: ${placed.size}/7. Boleh juga klik kepingan kemudian klik ruang.</p>`);bindTiles()
+}
+let selected=null,drag=null;
+function bindTiles(){document.querySelectorAll('.hept-piece:not(.done)').forEach(el=>{el.addEventListener('pointerdown',pointerDown);el.addEventListener('click',()=>{selected=+el.dataset.tile;$('feedback').textContent='Kepingan dipilih. Klik ruang yang sepadan pada heptagon.'})});document.querySelectorAll('.wedge-target').forEach(el=>el.addEventListener('click',()=>{if(selected!==null){place(selected,+el.dataset.slot);selected=null}}))}
+function pointerDown(e){if(e.pointerType==='mouse'&&e.button!==0)return;let el=e.currentTarget,id=+el.dataset.tile;selected=id;let ghost=el.cloneNode(true);ghost.className='hept-piece hept-ghost';document.body.appendChild(ghost);drag={id,ghost,pointerId:e.pointerId,originX:e.clientX,originY:e.clientY};move(e);e.preventDefault()}
+function move(e){if(!drag||drag.pointerId!==e.pointerId)return;drag.ghost.style.left=e.clientX+'px';drag.ghost.style.top=e.clientY+'px'}
+function up(e){
+ if(!drag||drag.pointerId!==e.pointerId)return;
+ const {id,ghost,originX,originY}=drag;
+ ghost.remove();drag=null;
+ if(Math.hypot(e.clientX-originX,e.clientY-originY)<8){selected=id;return;}
+ const board=$('hept-board');if(!board)return;
+ const pt=board.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;
+ const ctm=board.getScreenCTM();if(!ctm)return;
+ const local=pt.matrixTransform(ctm.inverse());
+ const dx=local.x-110,dy=local.y-110;
+ if(Math.hypot(dx,dy)>108){$('feedback').textContent='Lepaskan kepingan berhampiran heptagon.';return;}
+ let a=(Math.atan2(dy,dx)+Math.PI/2+2*Math.PI)%(2*Math.PI);
+ // Each triangular wedge is centered half a sector after its starting ray.
+ let slot=Math.floor(a/(2*Math.PI/7))%7;
+ // Forgiving snap: when the correct piece is dropped anywhere on the board,
+ // allow it to snap to its own vacant wedge; the target stays educationally clear.
+ if(slot!==id && !placed.has(id)){
+   const delta=Math.min((slot-id+7)%7,(id-slot+7)%7);
+   if(delta<=1 || placed.size===6) slot=id;
+ }
+ place(id,slot);selected=null;
+}
+function place(id,slot){if(id!==slot){$('feedback').textContent='Belum tepat. Cuba putar perhatian pada bentuk kepingan dan cari bahagian yang sepadan.';return}if(placed.has(id))return;placed.add(id);sessionStorage.setItem('dkp3_tiles',JSON.stringify([...placed]));if(placed.size===7){won=true;sessionStorage.setItem('dkp3_won','yes');progress();reward()}else puzzle()}
+function reward(){let pts=Array.from({length:7},(_,i)=>{let a=2*Math.PI*i/7-Math.PI/2;return (60+49*Math.cos(a))+','+(60+49*Math.sin(a))}).join(' ');openDialog('<div id="reward"><h2>🎉 Kod Poligon Ketiga Ditemui!</h2><svg viewBox="0 0 120 120" role="img" aria-label="Heptagon"><polygon points="'+pts+'" fill="#e6c5f5" stroke="#8052a0" stroke-width="5"/></svg><h2>HEPTAGON</h2><p>7 sisi lurus dan 7 bucu.</p><p>Kod terkumpul: <b>Pentagon → Heksagon → Heptagon</b></p><button class="primary" onclick="closeDialog()">Simpan kod ✓</button></div>')}
+window.addEventListener('pointermove',move);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',()=>{if(drag){drag.ghost.remove();drag=null}});progress();
+</script><div id="next4" style="display:none;position:fixed;right:15px;bottom:14px;z-index:90;background:#fff2d3;border:3px solid #9864ae;border-radius:15px;padding:12px"><a href="detektif-cabaran-4.html" style="color:#634187;font-weight:bold">Cabaran 4 →</a></div><script>function unlock4(){if(sessionStorage.getItem("dkp3_won")==="yes")document.getElementById("next4").style.display="block"}unlock4();setInterval(unlock4,1200)</script></body></html>

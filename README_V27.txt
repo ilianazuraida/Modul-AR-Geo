@@ -1,0 +1,1 @@
+AR-Geo Pop! Belon Geometri V27. Layout controls, labels, score and question realigned with blank illustrated artwork. Open index.html for full site or balloon-pop.html for game. Camera requires HTTPS and permission; sensor needs on-device testing.

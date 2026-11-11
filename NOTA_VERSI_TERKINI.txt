@@ -1,0 +1,5 @@
+AR-Geo Pop! Belon Geometri — versi pembetulan.
+Buka index.html untuk menu utama atau balloon-pop.html untuk permainan.
+Reka bentuk ilustrasi asal dikekalkan. Video kamera dipaparkan di belakang belon dengan tepi beransur hilang (tiada petak).
+Klik atau sentuh belon: fungsi JavaScript tersedia. Sensor tangan: MediaPipe melalui CDN, perlu internet, HTTPS/localhost dan kebenaran kamera; belum diuji pada peranti pengguna.
+Untuk GitHub Pages: upload kandungan folder ini, bukan fail ZIP.

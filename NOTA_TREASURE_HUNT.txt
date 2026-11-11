@@ -1,0 +1,1 @@
+AR-Geo Treasure Hunt: halaman pertama dihubungkan daripada Dunia Permainan. Input nama, avatar dan simpanan peranti berfungsi. Sambungan Firebase, bilik multiplayer, animasi berjalan dan cabaran pulau BELUM dilaksanakan. Permainan V38 lain dikekalkan.

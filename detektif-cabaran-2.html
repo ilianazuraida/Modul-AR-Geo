@@ -1,0 +1,192 @@
+<!doctype html><html lang="ms"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cabaran 2 — Makmal Poligon Rahsia</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');*{box-sizing:border-box}body{margin:0;background:#d5b6db;color:#46304d;font-family:'Comic Neue','Comic Sans MS',sans-serif}button,a{font:inherit}.game{max-width:1600px;margin:auto;padding:8px}.top,.status{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:7px}.pill{background:#fff5df;border:2px solid #a37ba6;border-radius:15px;padding:7px 12px;font-weight:700}.top a{color:#583f69;text-decoration:none}.room{width:100%;aspect-ratio:1648/928;position:relative;background:url('makmal-poligon-rahsia.webp') center/100% 100% no-repeat;border:3px solid #b08eb7;border-radius:16px;overflow:hidden}.hit{position:absolute;border:2px solid transparent;border-radius:14px;background:transparent;cursor:pointer;color:transparent;font-size:0}.hit:hover,.hit:focus-visible{background:#fff6aa45;border:3px dashed #ffea7c;outline:none}.cards{left:30%;top:80%;width:19%;height:17%;pointer-events:none}.books{left:60%;top:80%;width:16%;height:17%}.board{left:74%;top:22%;width:23%;height:42%}.machine{left:39%;top:32%;width:32%;height:48%}.blue{left:38%;top:56%;width:17%;height:26%}.orange{left:55%;top:56%;width:17%;height:26%}.status{justify-content:flex-start;margin-top:8px}.message{padding:12px;background:#fff7e9;border:2px solid #ba93c2;border-radius:15px}.modal{position:fixed;inset:0;background:#23152cc9;display:none;align-items:center;justify-content:center;z-index:10;padding:15px}.modal.show{display:flex}.card{background:#fff6df;border:5px solid #b68ac1;border-radius:24px;max-width:580px;width:100%;text-align:center;padding:22px;box-shadow:0 12px 40px #0005}.card h2{margin:0 0 10px}.btn{display:inline-block;border:0;border-radius:15px;background:#8058a3;color:white;padding:12px 17px;margin:5px;cursor:pointer;text-decoration:none;font-weight:bold}.btn:disabled{opacity:.5;cursor:not-allowed}.close{float:right;border:0;background:none;font-size:25px;cursor:pointer}.shape{font-size:52px;color:#7951a4}.choices{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}.choices button{border:3px solid #b99bc5;background:white;border-radius:15px;font-size:35px;padding:10px 17px;cursor:pointer}.note{font-size:14px}.tip{font-weight:bold;color:#72448e}@media(max-width:650px){.pill{font-size:12px;padding:5px}.card{padding:14px}.message{font-size:14px}}
+
+/* Kad boleh diseret dan kotak sasaran pada ilustrasi asal */
+.drag-tray{position:relative;margin:10px auto;padding:12px;background:#fff6e7;border:3px solid #b68ac1;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;max-width:950px}
+.drag-tray strong{width:100%;text-align:center;font-size:18px}.poly-card{touch-action:none;user-select:none;cursor:grab;width:83px;height:85px;border:2px solid #b68ac1;background:#fffdf7;border-radius:12px;display:grid;place-items:center;box-shadow:0 3px 5px #0002}.poly-card svg{width:68px;height:68px;pointer-events:none}.poly-card.done{opacity:.25;pointer-events:none}.poly-card:focus-visible{outline:4px solid #ffbb40}.poly-card.dragging{opacity:.55}.dropbox{position:absolute;z-index:21;border:3px dashed #ffffffb8;border-radius:14px;background:#ffffff13;cursor:pointer}.dropbox.over{background:#ffe99b8a;border-color:#ffe047}.dropbox.blue{left:38%;top:56%;width:17%;height:26%}.dropbox.orange{left:55%;top:56%;width:17%;height:26%}.drag-ghost{position:fixed;z-index:1000;pointer-events:none;transform:translate(-50%,-50%);opacity:.9}.drag-ghost svg{width:68px;height:68px}.drag-help{text-align:center;font-size:14px;width:100%}
+
+.cards-in-room{position:absolute;left:28%;top:78%;width:30%;height:20%;z-index:20;display:flex;gap:3px;align-items:center;justify-content:center}
+.cards-in-room .poly-card{pointer-events:auto;width:23%;height:82%;min-width:0;padding:2px;border:2px solid #805b9d;border-radius:10px;background:#fff7e5e8;touch-action:none;cursor:grab;position:relative;z-index:6}
+.cards-in-room .poly-card svg{width:100%;height:100%;pointer-events:none}
+.cards-in-room .poly-card.dragging{opacity:.35}
+.dropbox{z-index:7;touch-action:none}
+.drag-ghost{width:85px;height:85px;background:#fff7e9;border:3px solid #a479b5;border-radius:12px;display:grid;place-items:center}
+@media(max-width:700px){.cards-in-room{left:26%;width:36%}.drag-ghost{width:65px;height:65px}}
+
+.cards-in-room{position:absolute;inset:0;width:100%;height:100%;z-index:30;pointer-events:none;display:block}
+.cards-in-room .poly-card{position:absolute;transform:translate(-50%,-50%);width:8.1%;height:12.2%;min-width:0;min-height:0;z-index:31;display:block;border:3px dashed #fff4aa;background:#ffffff12;box-shadow:0 0 0 2px #78569d99;border-radius:10px;touch-action:none;user-select:none;cursor:grab;pointer-events:auto;padding:0}
+.cards-in-room .poly-card:hover{background:#fff1aa55;border-color:#ffe55a}
+.cards-in-room .poly-card.done{opacity:.75;pointer-events:none;background:#b9e6b1a8;border:3px solid #3b9c72}
+.card-label{position:absolute;right:-5px;top:-12px;background:#fff6da;color:#684c83;border:2px solid #896aa0;border-radius:99px;padding:0 5px;font-size:20px;font-weight:bold;line-height:1.2}
+.dropbox{z-index:40!important;touch-action:none;border:4px dashed #fff7c8!important;background:#ffffff25!important}
+.dropbox.over{background:#ffe15e99!important;border-color:#ffd000!important}
+.drag-ghost{position:fixed!important;z-index:9999!important;pointer-events:none!important;width:85px;height:85px;transform:translate(-50%,-50%);display:grid;place-items:center;background:#fff9e7;border:3px solid #6f5092;border-radius:14px;box-shadow:0 6px 20px #0005}
+.drag-ghost svg{width:80%;height:80%}
+
+/* Invisible interaction surfaces: the watercolor illustration is unchanged. */
+.cards-in-room .poly-card,
+.cards-in-room .poly-card:hover,
+.cards-in-room .poly-card:active,
+.cards-in-room .poly-card:focus {
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  outline:0!important;
+  -webkit-tap-highlight-color:transparent;
+}
+.cards-in-room .poly-card:not(.done) .card-label {display:none!important}
+.cards-in-room .poly-card.done .card-label {
+  display:block!important;
+  background:#e9f7e5;
+  border:2px solid #65a47d;
+}
+.dropbox,.dropbox.blue,.dropbox.orange {
+  border:0!important;
+  background:transparent!important;
+  outline:0!important;
+  -webkit-tap-highlight-color:transparent;
+}
+.dropbox.over {background:#ffea7a77!important;outline:3px solid #ffdb6b!important}
+.hit:focus,.hit:hover,.hit:focus-visible {border:0!important;outline:0!important;background:transparent!important}
+
+/* Shapes placed correctly stay visibly inside their destination box. */
+.dropbox {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:2px;align-content:center;justify-items:center;padding:5px;box-sizing:border-box;overflow:hidden}
+.dropbox .placed-shape{width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.dropbox .placed-shape svg{display:block;width:100%;height:100%;max-width:64px;max-height:64px;filter:drop-shadow(0 1px 2px #0005)}
+.dropbox .placed-shape.new-shape{animation:landShape .35s ease-out}
+@keyframes landShape{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* Shapes rest only in the open upper trays, clear of printed labels. */
+.dropbox.blue{left:38.6%!important;top:63%!important;width:14.2%!important;height:11.4%!important}
+.dropbox.orange{left:55.4%!important;top:63%!important;width:14.2%!important;height:11.4%!important}
+.dropbox{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:1fr!important;gap:2px!important;padding:1px!important;align-items:center!important;justify-items:center!important;overflow:visible!important}
+.dropbox .placed-shape{width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.dropbox .placed-shape svg{width:100%!important;height:100%!important;max-width:43px!important;max-height:43px!important;filter:drop-shadow(0 1px 2px #0004)}
+
+/* Final geometry: upper open compartments only; never cover printed labels. */
+.dropbox.blue{left:39.2%!important;top:56.3%!important;width:13.0%!important;height:7.6%!important}
+.dropbox.orange{left:56.0%!important;top:56.3%!important;width:12.5%!important;height:7.6%!important}
+.dropbox{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-evenly!important;gap:0!important;padding:1px!important;overflow:hidden!important;box-sizing:border-box!important}
+.dropbox .placed-shape{flex:1 1 0!important;min-width:0!important;min-height:0!important;width:auto!important;height:85%!important;max-width:25%!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.dropbox .placed-shape svg{width:100%!important;height:100%!important;max-width:27px!important;max-height:27px!important;filter:drop-shadow(0 1px 1px #0005)}
+
+/* Final layer correction: results are contained in the open trays, not over labels or dialogs. */
+.room{isolation:isolate}
+.modal{z-index:99999!important}
+.dropbox.blue{left:39.2%!important;top:54.3%!important;width:13.0%!important;height:7.4%!important}
+.dropbox.orange{left:56.0%!important;top:54.3%!important;width:12.5%!important;height:7.4%!important}
+.dropbox{overflow:hidden!important;z-index:8!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-evenly!important;padding:2px!important;gap:2px!important}
+.dropbox .placed-shape{flex:0 1 30%!important;max-width:30%!important;height:90%!important;min-width:0!important}
+.dropbox .placed-shape svg{max-width:29px!important;max-height:29px!important;width:100%!important;height:100%!important}
+</style></head><body><main class="game"><div class="top"><span class="pill">🔎 DETEKTIF KOD POLIGON · CABARAN 2</span><a class="pill" href="detektif-cabaran-1.html">↩ Bilik 1</a></div><div class="room" aria-label="Makmal poligon watercolor interaktif"><button class="hit cards" onclick="inspect('cards')" aria-label="Periksa kad di atas meja">Kad</button><button class="hit books" onclick="inspect('books')" aria-label="Periksa buku di atas meja">Buku</button><button class="hit board" onclick="inspect('board')" aria-label="Periksa papan poligon">Papan</button><button class="hit machine" onclick="nextStep()" aria-label="Periksa mesin pengasing">Mesin</button><div class="cards-in-room" id="pieces" aria-label="Seret bentuk terus dari papan poligon"></div><div class="dropbox blue" data-bin="regular" aria-label="Kotak biru Poligon Sekata" title="Lepaskan poligon sekata di sini"></div><div class="dropbox orange" data-bin="irregular" aria-label="Kotak jingga Poligon Tidak Sekata" title="Lepaskan poligon tidak sekata di sini"></div></div><section class="drag-tray" id="dragTray"><strong>Seret keenam-enam bentuk ke ruang terbuka bekas mesin. Kod heksagon muncul secara automatik selepas selesai.</strong><span class="pill" id="sortedCount">Diisih: 0/6</span><div class="drag-help">Alternatif: sentuh bentuk, kemudian sentuh kotak.</div></section><div class="status"><span class="pill" id="progress">Komponen: 0/3</span><span class="pill" id="repair">Mesin: Rosak</span><span class="pill" id="code">Kod kedua: 🔒</span><button class="btn" id="nextAction" type="button" onclick="nextStep()">Lihat tugasan seterusnya</button></div><div class="message" id="message"><b>Comel:</b> Aduh! Mesin Poligon Rosak! Cari tiga komponen tersembunyi dalam makmal, baiki gear dan hidupkan mesin untuk memperoleh kod poligon kedua. Klik objek dalam bilik!</div></main><div class="modal" id="modal"><div class="card"><button class="close" onclick="closeModal()" aria-label="Tutup">×</button><h2 id="title"></h2><div id="body"></div></div></div><script>
+const found=new Set(JSON.parse(sessionStorage.getItem('dkp2_found')||'[]'));let repaired=sessionStorage.getItem('dkp2_repaired')==='yes',won=sessionStorage.getItem('dkp2_won')==='yes';const $=id=>document.getElementById(id);function save(){sessionStorage.setItem('dkp2_found',JSON.stringify([...found]));sessionStorage.setItem('dkp2_repaired',repaired?'yes':'no');sessionStorage.setItem('dkp2_won',won?'yes':'no');refresh()}function refresh(){$('progress').textContent='Poligon: '+sorted.size+'/6';$('repair').textContent='Mesin: '+(won?'Aktif':'Belum aktif');$('code').textContent='Kod kedua: '+(won?'⬡':'🔒');const b=$('nextAction');if(b)b.textContent=won?'Lihat kod ⬡':'Kelaskan '+(6-sorted.size)+' poligon lagi';}function modal(t,b){$('title').textContent=t;$('body').innerHTML=b;$('modal').classList.add('show')}function closeModal(){$('modal').classList.remove('show')}function collect(x){found.add(x);save();if(found.size===3&&sorted.size===6&&!repaired){$('message').innerHTML='<b>Semua komponen ditemui!</b> Tekan butang Baiki gear heksagon.';}}function inspect(x){
+ if(won){modal('Mesin Berjaya Diaktifkan!','<p>Kod poligon kedua: <b>heksagon</b>.</p><div class="shape">⬡</div><p>Kod terkumpul: ⬠ → ⬡</p>');return;}
+ if(x==='cards'){collect('cards');modal('Kad Gear','<p>Gear heksagon mempunyai 6 sisi lurus dan 6 bucu.</p>');return;}
+ if(x==='books'){collect('books');modal('Buku Jurutera','<p>Poligon sekata mempunyai semua sisi sama panjang dan semua sudut pedalaman sama besar.</p>');return;}
+ if(x==='board'){collect('board');modal('Papan Pelan Rahsia','<p>Gear utama berbentuk heksagon sekata.</p>');return;}
+ if(x==='machine'){
+  if(sorted.size<6){modal('Mesin Pengasing','<p>Seret keenam-enam poligon pada papan ke bekas yang betul dahulu.</p>');return;}
+  if(found.size<3){modal('Komponen Belum Lengkap','<p>Periksa kad, buku dan papan poligon dahulu.</p>');return;}
+  if(!repaired){modal('Baiki Gear','<p>Pilih gear heksagon sekata.</p><div class="choices"><button onclick="gear(5)">⬠</button><button onclick="gear(6)">⬡</button><button onclick="gear(8)">⯃</button></div><p id="feedback"></p>');return;}
+  modal('Hidupkan Mesin','<button class="btn" onclick="activate()">Aktifkan Mesin</button>');
+ }
+}
+function nextStep(){if(won){modal('Kod Poligon Kedua','<div class="shape">⬡</div><p>Heksagon — kod kedua berjaya diperoleh!</p><button class="btn" onclick="closeModal()">Tutup</button>');}else{modal('Teruskan Mengelaskan','<p>Seret semua enam bentuk poligon ke bekas yang betul untuk mengaktifkan mesin.</p>');}}
+function gear(n){if(n!==6){$('feedback').textContent='Gear tidak sesuai! Periksa semula bilangan sisi dan bucu.';return}repaired=true;save();modal('🔧 Gear Berjaya Dipasang!','<p>Bagus! Gear heksagon sekata telah dipasang pada mesin.</p><button class="btn" onclick="nextStep()">Hidupkan mesin →</button>')}function activate(){won=true;save();modal('Kod Poligon Kedua Ditemui!','<p>Mesin berfungsi semula! Kamu memperoleh simbol <b>heksagon</b>.</p><div class="shape">⬡</div><p>Kod poligon: ⬠ → ⬡</p><button class="btn" onclick="closeModal()">Simpan kod</button>')}// Permainan seret dan lepas: pointer events menyokong tetikus dan skrin sentuh.
+const polygonItems=[
+ {id:'tri',n:3,kind:'regular',fill:'#d7b7ed',name:'Segi tiga sama sisi',x:78.1,y:34.7},
+ {id:'square',n:4,kind:'regular',fill:'#b4d8f1',name:'Segi empat sama',x:87.4,y:34.7},
+ {id:'pent',n:5,kind:'regular',fill:'#f2a4c3',name:'Pentagon sekata',x:78.1,y:45.7},
+ {id:'hex',n:6,kind:'regular',fill:'#b8d994',name:'Heksagon sekata',x:87.4,y:45.7},
+ {id:'skew',n:4,kind:'irregular',fill:'#f7cf6c',name:'Segi empat tidak sekata',x:78.1,y:58.4,pts:'12,75 68,75 88,22 35,22'},
+ {id:'odd',n:6,kind:'irregular',fill:'#a4d7e8',name:'Poligon tidak sekata',x:87.4,y:58.4,pts:'12,25 60,18 85,50 58,44 35,76 9,65'}
+];
+const sorted=new Set(JSON.parse(sessionStorage.getItem('dkp2_sorted')||'[]'));
+function polySvg(p){let points=p.pts||Array.from({length:p.n},(_,i)=>{const a=2*Math.PI*i/p.n-Math.PI/2;return (50+37*Math.cos(a)).toFixed(1)+','+(50+37*Math.sin(a)).toFixed(1)}).join(' ');return `<svg viewBox="0 0 100 100" role="img" aria-label="${p.name}"><polygon points="${points}" fill="${p.fill}" stroke="#5a456b" stroke-width="4" stroke-linejoin="round"/></svg>`}
+function renderPlaced(newId){
+ document.querySelectorAll('.dropbox').forEach(box=>{
+  const shapes=polygonItems.filter(p=>sorted.has(p.id)&&p.kind===box.dataset.bin);
+  box.innerHTML=shapes.map(p=>`<span class="placed-shape ${p.id===newId?'new-shape':''}" aria-label="${p.name}">${polySvg(p)}</span>`).join('');
+  box.setAttribute('aria-label',(box.dataset.bin==='regular'?'Kotak Poligon Sekata':'Kotak Poligon Tidak Sekata')+', '+shapes.length+' bentuk');
+ });
+}
+function renderPieces(){
+ const host=document.getElementById('pieces');
+ host.innerHTML=polygonItems.map(p=>`<button type="button" class="poly-card ${sorted.has(p.id)?'done':''}" data-id="${p.id}" style="left:${p.x}%;top:${p.y}%" aria-label="Seret ${p.name} ke bekas" title="${p.name}" ${sorted.has(p.id)?'disabled':''}><span class="card-label">${sorted.has(p.id)?'✓':''}</span></button>`).join('');
+ $('sortedCount').textContent='Diisih: '+sorted.size+'/6';
+ renderPlaced();
+ host.querySelectorAll('.poly-card:not(.done)').forEach(el=>{
+   el.addEventListener('pointerdown',startDrag);
+   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectPolygon(el.dataset.id)}});
+ });
+}
+let drag=null;let selectedPolygon=null;
+function selectPolygon(id){if(sorted.has(id))return;selectedPolygon=id;document.querySelectorAll('.poly-card').forEach(c=>{c.style.outline=c.dataset.id===id?'4px solid #ffb92f':''});$('message').innerHTML='<b>Kad dipilih!</b> Sekarang klik kotak biru (sekata) atau jingga (tidak sekata) pada mesin.';}
+function placePolygon(id,kind){
+ const p=polygonItems.find(x=>x.id===id);
+ if(!p||sorted.has(id))return;
+ if(kind!==p.kind){$('message').innerHTML='<b>Cuba lagi!</b> Poligon sekata mempunyai semua sisi sama panjang dan semua sudut pedalaman sama besar.';return;}
+ sorted.add(id);
+ sessionStorage.setItem('dkp2_sorted',JSON.stringify([...sorted]));
+ selectedPolygon=null;
+ renderPieces();renderPlaced(id);
+ $('message').innerHTML='<b>Syabas!</b> '+p.name+' berjaya dikelaskan. ('+sorted.size+'/6)';
+ if(sorted.size===6){
+   won=true;repaired=true;found.add('cards');found.add('books');found.add('board');
+   save();refresh();
+   $('message').innerHTML='<b>Mesin berjaya diaktifkan!</b> Semua poligon dikelaskan. Kod kedua: heksagon ⬡.';
+   modal('Kod Poligon Kedua Ditemui!','<p>Syabas! Semua enam poligon berjaya dikelaskan.</p><div class="shape">⬡</div><p><b>HEKSAGON — kod kedua</b></p><p>Kod terkumpul: ⬠ → ⬡</p><button class="btn" onclick="closeModal()">Simpan kod ✓</button>');
+ }else{refresh()}
+}
+document.querySelectorAll('.dropbox').forEach(box=>{box.setAttribute('role','button');box.setAttribute('tabindex','0');box.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move'});box.addEventListener('drop',e=>{e.preventDefault();const id=e.dataTransfer.getData('text/plain');if(id)placePolygon(id,box.dataset.bin)});box.addEventListener('click',()=>{if(selectedPolygon)placePolygon(selectedPolygon,box.dataset.bin);else $('message').innerHTML='Klik salah satu kad poligon di atas meja dahulu.'});box.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();box.click()}})});
+
+
+function startDrag(e){
+ if(e.pointerType==='mouse'&&e.button!==0)return;
+ const origin=e.currentTarget, id=origin.dataset.id;
+ if(sorted.has(id))return;
+ const p=polygonItems.find(x=>x.id===id);
+ const ghost=document.createElement('div');
+ ghost.className='drag-ghost';ghost.innerHTML=polySvg(p);
+ document.body.appendChild(ghost);
+ drag={id,ghost,origin,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,moved:false};
+ origin.classList.add('dragging');
+ try{origin.setPointerCapture(e.pointerId)}catch(_){}
+ moveDrag(e);
+ e.preventDefault();
+}
+function moveDrag(e){
+ if(!drag||e.pointerId!==drag.pointerId)return;
+ drag.moved=drag.moved||Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)>8;
+ drag.ghost.style.left=e.clientX+'px';drag.ghost.style.top=e.clientY+'px';
+ document.querySelectorAll('.dropbox').forEach(b=>{
+  const r=b.getBoundingClientRect();
+  b.classList.toggle('over',e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);
+ });
+}
+function endDrag(e){
+ if(!drag||e.pointerId!==drag.pointerId)return;
+ const {id,moved}=drag;
+ const box=[...document.querySelectorAll('.dropbox')].find(b=>{
+  const r=b.getBoundingClientRect();
+  return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
+ });
+ cancelDrag();
+ if(box){placePolygon(id,box.dataset.bin)}
+ else if(!moved){selectPolygon(id)}
+}
+function cancelDrag(){
+ if(!drag)return;
+ const {origin,ghost,pointerId}=drag;
+ try{if(origin.hasPointerCapture(pointerId))origin.releasePointerCapture(pointerId)}catch(_){}
+ ghost.remove();origin.classList.remove('dragging');
+ document.querySelectorAll('.dropbox').forEach(b=>b.classList.remove('over'));
+ drag=null;
+}
+window.addEventListener('pointermove',moveDrag,{passive:false});
+window.addEventListener('pointerup',endDrag);
+window.addEventListener('pointercancel',cancelDrag);
+renderPieces();refresh();
+
+refresh();
+</script><div id="go3" style="position:fixed;right:15px;bottom:15px;z-index:5000;display:none"><a href="detektif-cabaran-3.html" style="display:block;background:#fff2c7;border:3px solid #8f63a7;border-radius:18px;padding:12px 20px;font-weight:bold;color:#5b3973;text-decoration:none">Cabaran 3 →</a></div><script>function showThird(){if(sessionStorage.getItem('dkp2_won')==='yes')document.getElementById('go3').style.display='block'}showThird();setInterval(showThird,1000);</script></body></html>

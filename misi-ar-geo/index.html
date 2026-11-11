@@ -1,0 +1,677 @@
+<!doctype html><html lang="ms"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Misi AR-Geo | Peta Pengembaraan</title><style>
+:root{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#254b3c}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(160deg,#e4f5ef,#fff4df);display:flex;flex-direction:column;align-items:center;padding:12px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;width:min(1200px,100%);padding:4px 8px 12px}header strong{font-size:clamp(15px,2.3vw,24px)}.pill{background:#fff9e9;border:2px solid #dfc79d;border-radius:40px;padding:9px 14px;font-weight:750}.frame{position:relative;width:min(1200px,100%);border:7px solid #fffaf0;border-radius:23px;box-shadow:0 10px 35px #567f7155;overflow:hidden;background:#cae8c5}.map{display:block;width:100%;height:auto;user-select:none}.hotspot{position:absolute;z-index:3;border:0;background:rgba(255,255,255,.08);border-radius:22px;cursor:pointer;transform:translate(-50%,-50%);display:grid;place-items:center;min-width:6%;min-height:9%;transition:background .2s,box-shadow .2s}.hotspot:hover,.hotspot:focus-visible{background:#fff8df7a;outline:3px dashed #d48c32}.hotspot.locked{cursor:pointer}.hotspot.locked::after{content:'🔒';position:absolute;right:-8px;top:-16px;font-size:clamp(12px,2.3vw,26px);filter:drop-shadow(0 2px 2px #fff)}.hotspot.unlocked{box-shadow:0 0 0 3px #74bb73,0 0 18px 7px #d6ffd5b0;background:#d9ffcb4d}.hotspot.unlocked::after{content:"🔎";position:absolute;right:-8px;top:-16px;font-size:22px}.hotspot.first{box-shadow:0 0 0 3px #ffcd48,0 0 18px 8px #fff0a4b0;background:#fff5b83a}.hotspot.first::after{content:'▶';color:#704d10;font-size:18px;position:absolute;right:-8px;top:-12px;background:#ffe58a;border-radius:50%;padding:3px 8px}.traveler{position:absolute;z-index:4;left:9%;top:53%;transform:translate(-50%,-50%);background:#fff7e8;border:3px solid #c88452;box-shadow:0 3px 12px #59451c7c;border-radius:50%;width:clamp(35px,6vw,67px);height:clamp(35px,6vw,67px);display:grid;place-items:center;font-size:clamp(15px,2.8vw,30px);pointer-events:none;transition:left 2.8s ease-in-out,top 2.8s ease-in-out}.traveler.walk{animation:bob .3s infinite alternate}@keyframes bob{to{margin-top:-7px}}.hint{font-size:13px;opacity:.8;text-align:center;padding:10px 5px}.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0}.btn{background:#377c58;color:white;border:0;border-radius:14px;padding:13px 19px;font-weight:800;font-size:15px;cursor:pointer}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.secondary{background:#e8c88c;color:#513b20}.game{position:fixed;inset:0;z-index:30;background:#e6f3e5;overflow:auto;padding:18px;display:flex;align-items:center;justify-content:center}.game[hidden]{display:none}.gamepanel{width:min(760px,100%);background:#fffaf0;border:5px solid #e7bf83;border-radius:26px;padding:clamp(14px,3vw,28px);box-shadow:0 18px 60px #1d493e45;text-align:center}.gamepanel h2{color:#744a2a;margin:8px}.gamepanel p{line-height:1.5}.shapegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.shapechoice{background:#fff;border:3px solid #d5dfbd;border-radius:20px;padding:12px 6px;cursor:pointer;font-weight:800;color:#315d49;min-height:165px}.shapechoice svg{width:100%;max-width:135px;height:110px;display:block;margin:auto}.shapechoice:hover,.shapechoice:focus-visible{border-color:#efad4b;background:#fff8e1}.shapechoice:disabled{cursor:default;opacity:.8}.feedback{min-height:50px;font-weight:800;color:#426d48}.gamebar{display:flex;justify-content:space-between;align-items:center;gap:8px}.veil{position:fixed;inset:0;background:#153a2c9c;display:grid;place-items:center;padding:18px;z-index:20}.veil[hidden]{display:none}.dialog{background:#fff9eb;border:5px solid #e1ba7e;border-radius:22px;max-width:520px;width:100%;padding:22px;text-align:center;box-shadow:0 15px 45px #1235}.dialog h2{margin:6px 0 10px;color:#795025}.dialog p{line-height:1.65}.dialog .btn{margin-top:8px}.small{font-size:13px;color:#6e675b}.status{background:#fff9e8;border-radius:15px;padding:10px 15px;text-align:center;font-weight:650;width:min(100%,1200px)}
+.chests{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.chest{border:3px solid #d9b87a;background:linear-gradient(#fff7dc,#f4e3bb);border-radius:18px;min-height:120px;font-size:42px;cursor:pointer}.chest:disabled{opacity:.55;cursor:default}.chest small{display:block;font-size:14px;color:#684b2c;font-weight:750}.answers{display:grid;gap:9px;margin:16px auto;max-width:480px}.answers button{border:2px solid #c8d7b9;border-radius:14px;padding:13px;background:white;color:#315d49;font-size:16px;font-weight:750;cursor:pointer}.answers button:hover{background:#e8f4dd}.clue{background:#fff1d4;border:2px dashed #d4a75d;padding:18px;border-radius:16px;line-height:1.6;font-size:18px}.keys{font-weight:800;color:#96652b}.hidden{display:none!important}@media(max-width:520px){.chests{gap:6px}.chest{font-size:30px;min-height:94px}.chest small{font-size:11px}}
+
+.arstage{margin:14px auto;padding:16px;background:linear-gradient(#d8eef4,#f6f0d9);border-radius:18px;max-width:580px}.modelbox{height:185px;display:grid;place-items:center;perspective:600px}.modelbox svg{width:min(210px,65%);height:160px;filter:drop-shadow(5px 9px 4px #51665b44);transition:transform .35s}.arcontrols{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.arcontrols button{background:#e8c88c;color:#513b20;border:0;border-radius:12px;padding:10px 15px;font-weight:750;cursor:pointer}.arselect{padding:10px;border-radius:12px;border:2px solid #c8d7b9;font-size:16px;max-width:100%}.arnote{font-size:13px;color:#665b45}.arlink{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}.arlink input{width:min(360px,100%);padding:10px;border:2px solid #c8d7b9;border-radius:12px}.arlink button{padding:10px 14px;border:0;border-radius:12px;background:#377c58;color:white;cursor:pointer}
+
+.detectgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px auto;max-width:560px}.detectgrid button{border:3px solid #c8d7b9;border-radius:18px;padding:16px 8px;background:#fff;font-size:23px;font-weight:800;color:#315d49;cursor:pointer}.detectgrid button:disabled{opacity:.6}.detectgrid button:hover{background:#f4e6c9}.detectprogress{font-weight:800;color:#815a32}.detectmodel{width:100%;height:310px;border:0;border-radius:17px;background:#fff3dd}.detectclue{background:#fff1d4;border:2px dashed #d4a75d;border-radius:15px;padding:12px;font-weight:700}.detectbadge{font-size:54px;margin:10px}.detectnote{font-size:13px;color:#5c655a}@media(max-width:500px){.detectgrid button{font-size:20px;padding:12px 4px}.detectmodel{height:265px}}
+
+/* Langkah 13: kemasan watercolor yang menggunakan ilustrasi asal */
+body{background:radial-gradient(circle at 14% 8%,#fff5d9 0,transparent 34%),radial-gradient(circle at 90% 85%,#d8eddb 0,transparent 42%),#f8f1df}
+header{background:#fff9e9e8;border:2px solid #e4d3ad;border-radius:19px;margin-bottom:10px;padding:12px 18px;box-shadow:0 4px 15px #7d684022}
+.frame{border-color:#fff7e4;box-shadow:0 14px 40px #426c5740}
+.traveler{display:flex!important;align-items:center;justify-content:center;gap:0!important;background:#fff5d8!important;border:3px solid #fff!important;box-shadow:0 3px 14px #35563e70!important;border-radius:999px!important;padding:2px!important;min-width:0!important;width:clamp(45px,7.2vw,86px)!important;height:clamp(29px,4.4vw,53px)!important;font-size:0!important;overflow:visible}
+.traveler img{width:54%;aspect-ratio:1;object-fit:cover;border:2px solid #f4dba4;border-radius:50%;margin-right:-5px;box-shadow:0 1px 4px #66553755;background:#f9edce}
+.traveler img:last-child{margin-right:0}
+.gamepanel,.dialog{background:linear-gradient(155deg,#fffaf0,#fff4db)!important;border:3px solid #ead6ad!important;box-shadow:0 9px 28px #876d4330!important}
+.gamepanel::before{content:'';display:block;width:min(100%,450px);height:92px;margin:0 auto 10px;background:url('watak-asal.png') center 71% / cover no-repeat;border-radius:17px;border:2px solid #e7d7ad}
+.gamepanel h2,.dialog h2{color:#2d654b;letter-spacing:.01em}
+.btn,.answers button,.arcontrols button{transition:transform .16s,box-shadow .16s}
+.btn:hover,.answers button:hover,.arcontrols button:hover{transform:translateY(-2px);box-shadow:0 4px 12px #6a74422b}
+.hotspot.unlocked{animation:softGlow 2.3s ease-in-out infinite alternate}
+@keyframes softGlow{from{filter:brightness(1)}to{filter:brightness(1.2)}}
+@media(max-width:600px){header{padding:9px 10px}.gamepanel::before{height:68px}.traveler{width:47px!important;height:32px!important}}
+@media(prefers-reduced-motion:reduce){.hotspot.unlocked{animation:none}.btn,.answers button{transition:none}}
+.hotspot.demo-open{cursor:pointer;outline:3px dashed #f4ba44;outline-offset:-4px;background:rgba(255,225,100,.12)}
+
+/* Anak panah NEXT pada peta, tepat di sebelah penanda Aina dan Comel */
+#mapNext{position:absolute;z-index:12;left:44%;top:52%;transform:translate(-50%,-50%);border:4px solid #fff7c8;border-radius:999px;background:#f6a12d;color:#3f270c;font:900 clamp(15px,2vw,23px) system-ui;padding:12px 19px;box-shadow:0 5px 0 #b86b1b,0 7px 20px #5d421c77;cursor:pointer;white-space:nowrap;animation:nextPulse 1.5s ease-in-out infinite}
+#mapNext:hover,#mapNext:focus-visible{background:#ffe275;outline:4px solid #33815d;outline-offset:3px}
+#mapNext:disabled{opacity:.6;cursor:wait;animation:none}
+@keyframes nextPulse{50%{box-shadow:0 5px 0 #b86b1b,0 7px 27px 8px #ffd55b99}}
+@media(max-width:650px){#mapNext{font-size:13px;padding:8px 10px;border-width:2px}}
+#mapNext.mission-locked{opacity:.8;filter:grayscale(.45);cursor:not-allowed;background:#e8e4db!important;color:#6a625b!important;border-color:#b6afa5!important;box-shadow:none!important}#mapNext.mission-locked:hover{transform:none!important}
+/* Paparan Aina, Comel dan bentuk 3D yang tidak memotong teks asal. */
+.gamepanel::before{
+ content:''!important;
+ display:block!important;
+ width:min(100%,510px)!important;
+ height:245px!important;
+ margin:0 auto 14px!important;
+ background:#f5ead5 url('banner-aina-comel-ar.png') center center / cover no-repeat!important;
+ border-radius:18px!important;
+ border:2px solid #e7d7ad!important;
+}
+@media(max-width:600px){.gamepanel::before{height:145px!important}}
+
+/* Penanda kawasan klik tidak kelihatan; fungsi dan status kunci dikekalkan. */
+.frame .hotspot,
+.frame .hotspot.first,
+.frame .hotspot.unlocked,
+.frame .hotspot.locked,
+.frame .hotspot.demo-open,
+.frame .hotspot:hover,
+.frame .hotspot:focus-visible {
+ background:transparent !important;
+ box-shadow:none !important;
+ outline:none !important;
+ border-color:transparent !important;
+}
+.frame .hotspot::after,
+.frame .hotspot.first::after,
+.frame .hotspot.unlocked::after,
+.frame .hotspot.locked::after {content:none !important;display:none !important;}
+.frame .hotspot:focus-visible {outline:2px solid #c88452 !important;outline-offset:-3px !important;}
+
+/* Tipografi AR-Geo: tajuk dan kawalan tulisan tangan, teks pembelajaran mudah dibaca. */
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Nunito:wght@400;600;700;800;900&display=swap');
+:root,body,button,input,select,textarea{font-family:'Nunito',system-ui,-apple-system,sans-serif;}
+h1,h2,h3,h4,header strong,.pill,.btn,#mapNext,.dialog button,.gamepanel button,.chest small{font-family:'Kalam','Comic Sans MS',cursive!important;}
+#mapNext{font-weight:700!important;}
+.gamepanel p,.gamepanel .question,.gamepanel .feedback,.dialog p{font-family:'Nunito',system-ui,sans-serif;}
+
+
+ /* Ikon penanda dan butang navigasi yang lebih kecil */
+ .traveler{width:clamp(37px,5.4vw,64px)!important;height:clamp(28px,3.5vw,42px)!important;padding:1px!important;border-width:2px!important;}
+ .traveler img{border-width:1px!important;}
+ #mapNext{font-size:clamp(12px,1.45vw,17px)!important;padding:7px 12px!important;border-width:2px!important;box-shadow:0 3px 0 #b86b1b,0 4px 12px #5d421c55!important;}
+ @media(max-width:600px){.traveler{width:39px!important;height:29px!important;}#mapNext{font-size:12px!important;padding:6px 9px!important;}}
+
+#arGeoMenuOverlay[hidden],#arGeoActivityOverlay[hidden]{display:none!important}
+#arGeoMenuOverlay,#arGeoActivityOverlay{position:fixed;inset:0;background:#e6f3e8;z-index:99999;overflow:auto;padding:25px 14px;font-family:Nunito,system-ui,sans-serif;color:#245944}
+.arGeoSheet{max-width:900px;margin:0 auto;background:#fff8e9;border:3px solid #e8c991;border-radius:25px;padding:24px;box-shadow:0 10px 32px #416b5740}
+.arGeoSheet h2,.arGeoSheet h3,.arGeoSheet button{font-family:Kalam,system-ui,sans-serif}
+.arGeoMenuHead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.arGeoMenuHead button,.arGeoTile,.arGeoAction{border:2px solid #9dbda5;border-radius:15px;background:#fffdf6;color:#245944;padding:10px 15px;cursor:pointer;font-size:1.05rem}
+.arGeoTiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:18px 0}
+.arGeoTile{text-align:left;min-height:118px;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.arGeoTile strong{font-size:1.12rem}.arGeoTile small{font-family:Nunito,system-ui,sans-serif}
+.arGeoTile.done{background:#ddf3dc;border-color:#66a77b}
+.arGeoBar{height:13px;border-radius:50px;background:#e4e7d6;overflow:hidden}
+#arGeoBarFill{height:100%;background:#4c9b70;width:0;transition:width .3s}
+#arGeoActivityFrame{width:100%;height:min(80vh,920px);border:2px solid #d2c19a;border-radius:14px;background:white}
+#arGeoActivityOverlay .arGeoSheet{max-width:1100px}
+.arGeoAction{background:#e8c886;border-color:#dbb673;font-weight:bold}
+
+/* V38: model 3D is in normal document flow; no overlap with questions or controls. */
+#arGame .arstage{position:relative;display:flex;flex-direction:column;gap:12px;width:min(100%,580px);max-width:580px;margin:16px auto;padding:14px;overflow:visible;box-sizing:border-box}
+#arGame .modelbox{position:relative;display:block;width:100%;height:clamp(245px,38vw,355px);min-height:245px;overflow:hidden;perspective:none;border-radius:17px;background:linear-gradient(#e0eff0,#fff9e8);border:3px solid #e4c393;box-sizing:border-box}
+#arGame #modelFrame{display:block;width:100%;height:100%;border:0;border-radius:13px;background:transparent;position:relative;inset:auto;max-width:100%;max-height:100%}
+#arGame .arcontrols{position:relative;display:flex;justify-content:center;flex-wrap:wrap;gap:9px;clear:both}
+#arGame .arcontrols button{position:relative;flex:0 1 auto;min-height:42px}
+@media(max-width:600px){#arGame .arstage{padding:9px}#arGame .modelbox{height:260px}#arGame .arcontrols button{font-size:13px;padding:9px}}
+</style><style>#arGeoFinalOverlay[hidden]{display:none!important}</style><style>
+#arGeoWelcome[hidden],#arGeoCertificate[hidden]{display:none!important}
+#arGeoWelcome,#arGeoCertificate{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;background:rgba(33,75,63,.72);padding:18px;overflow:auto;font-family:'Nunito',system-ui,sans-serif}
+.arGeoIdentityCard{width:min(610px,100%);border-radius:26px;background:linear-gradient(145deg,#fff9ed,#e9f6ed);border:4px solid #e6c88e;box-shadow:0 16px 55px #213c3c55;padding:25px;text-align:center;color:#315c4b}
+.arGeoIdentityCard h2{font-family:'Kalam',cursive;font-size:clamp(27px,4vw,39px);margin:10px 0}
+.arGeoIdentityCard img{height:130px;max-width:100%;object-fit:contain;border-radius:14px}
+.arGeoIdentityCard input{display:block;width:min(390px,100%);margin:12px auto;padding:14px;border:2px solid #8cba9f;border-radius:13px;font:700 18px 'Nunito',system-ui,sans-serif;text-align:center;background:white;color:#315c4b}
+.arGeoIdentityCard button{padding:13px 22px;margin:7px;border:0;border-radius:13px;background:#397f67;color:white;font:800 16px 'Nunito',system-ui,sans-serif;cursor:pointer}
+.arGeoIdentityCard button:disabled{opacity:.5;cursor:not-allowed}
+#arGeoCertificate .arGeoIdentityCard{background:#fffdf4;border:10px double #d6ad62;max-width:770px}
+#arGeoCertName{font-family:'Kalam',cursive;font-size:clamp(28px,5vw,44px);color:#256a59;overflow-wrap:anywhere}
+@media print{body>*:not(#arGeoCertificate){display:none!important}#arGeoCertificate{position:static!important;background:white!important;padding:0!important}#arGeoCertificate .arGeoIdentityCard{box-shadow:none!important;width:100%!important;max-width:none!important}#arGeoCertPrint,#arGeoCertClose{display:none!important}}
+</style><style id="argeo-home-nav-style">.argeo-home-nav{position:fixed;top:12px;left:12px;z-index:2147483000;display:inline-flex;align-items:center;gap:7px;padding:11px 15px;border:2px solid #78bca3;border-radius:999px;background:#f2fff7;color:#205a47!important;font:800 15px/1.2 system-ui,-apple-system,sans-serif!important;text-decoration:none!important;box-shadow:0 4px 14px #1d62452b;max-width:calc(100vw - 24px)}.argeo-home-nav:hover,.argeo-home-nav:focus-visible{background:#dbf6e6;outline:2px solid #257f60;outline-offset:2px}@media(max-width:550px){.argeo-home-nav{top:8px;left:8px;padding:9px 11px;font-size:12px!important}}</style><script src="profile-storage.js"></script></head><body><a class="argeo-home-nav" href="../index.html" aria-label="Kembali ke Menu Utama AR-Geo">⌂ &nbsp; Kembali ke Menu Utama</a><header><strong>🌿 Misi AR-Geo · Peta Pengembaraan</strong><span class="pill" id="progress">🧭 MULA → Misi 1</span><span id="arGeoGreeting" class="pill" style="font-size:13px">🌟 Pengembara AR-Geo</span></header><main class="frame" aria-label="Peta enam destinasi AR-Geo"><img class="map" src="peta.png" alt="Peta Pengembaraan AR-Geo asal dengan enam misi"><div class="traveler" id="traveler" aria-label="Penanda perjalanan Aina dan Comel"><img src="aina.png" alt="Aina"><img src="comel.png" alt="Comel"></div><button class="hotspot first" style="left:40%;top:39%;width:15%;height:22%" aria-label="Buka Misi 1 Peneroka Bentuk" data-stop="1"></button><button class="hotspot locked" style="left:65%;top:35%;width:16%;height:23%" aria-label="Misi 2 Detektif Prisma" data-stop="2"></button><button class="hotspot locked" style="left:88%;top:37%;width:17%;height:24%" aria-label="Misi 3 Penyiasat Prisma" data-stop="3"></button><button class="hotspot locked" style="left:87%;top:75%;width:17%;height:25%" aria-label="Misi 4 Pereka Poligon berkunci" data-stop="4"></button><button class="hotspot locked" style="left:57%;top:74%;width:16%;height:24%" aria-label="Misi 5 Pakar Simetri berkunci" data-stop="5"></button><button class="hotspot locked" style="left:21%;top:72%;width:19%;height:25%" aria-label="Misi 6 Master Penyelesaian Masalah berkunci" data-stop="6"></button><button id="mapNext" type="button" aria-label="Anak panah NEXT: Gerak ke Misi 2">NEXT ➜ Misi 2</button></main><div class="controls"><button class="btn" id="start" hidden style="display:none">🚶 Mula di Misi 1</button><button class="btn" id="goMission2" hidden style="display:none;background:#c25e35">➡️ Gerakkan Aina &amp; Comel ke Misi 2</button><button class="btn secondary" id="demoTravel" hidden style="display:none" disabled>Mod Jelajah dimatikan</button><button class="btn secondary" id="reset">↩ Padam kemajuan & mula semula</button></div><div class="status" id="saveInfo" role="status" style="background:#eaf8ed;border:1px solid #a4cfad;margin-bottom:8px">💾 Kemajuan checkpoint akan disimpan pada pelayar ini.</div><div class="status" id="status" role="status">Tekan anak panah NEXT pada peta untuk bergerak dari MULA ke Misi 1.</div><section class="game" id="game" hidden aria-label="Cabaran 1 Cari Pasangan Saya"><div class="gamepanel"><div class="gamebar"><span class="pill" id="round">Cabaran 1 / 3</span><button class="btn secondary" id="exitGame">← Peta</button></div><h2>🌳 Cari Pasangan Saya!</h2><p>Aina dan Comel menemui tiga prisma. <strong id="prompt">Cari prisma segi empat sama.</strong></p><div class="shapegrid" id="shapegrid"></div><p class="feedback" id="feedback" aria-live="polite"></p><button class="btn" id="next" hidden>Cabaran seterusnya →</button></div></section><section class="game" id="mystery" hidden aria-label="Cabaran 2 Siapa Saya"><div class="gamepanel"><div class="gamebar"><span class="pill">🔑 <span id="keyCount">0</span> / 3 kunci</span><button class="btn secondary" id="exitMystery">← Peta</button></div><h2>🔐 Siapa Saya? Peti Misteri</h2><p>Comel menemui tiga peti! Pilih peti, baca petunjuk, kemudian teka prisma yang tersembunyi.</p><div class="chests" id="chests"></div><div id="mysteryQuestion" class="hidden"><p class="clue" id="clue"></p><div class="answers" id="answers"></div></div><p class="feedback" id="mysteryFeedback" aria-live="polite">Pilih satu peti untuk bermula.</p><button class="btn hidden" id="mysteryNext">Kembali ke peti →</button><button class="btn hidden" id="finishMission">🏅 Terima Lencana Peneroka Bentuk</button></div></section><section class="game" id="arGame" hidden aria-label="Cabaran 3 Teroka Prisma"><div class="gamepanel"><div class="gamebar"><span class="pill">🔍 Cabaran 3 / 3</span><button class="btn secondary" id="exitAR">← Peta</button></div><h2>🔄 Teroka Prisma!</h2><p><a class="btn" style="display:inline-block;text-decoration:none" href="makmal-ar.html">📱 Buka Makmal AR dan Model 3D ↗</a></p><p>Comel mahu kamu menyiasat tiga bentuk. Pilih bentuk dan putarkannya untuk melihat dari sudut yang berbeza.</p><label for="arShape"><strong>Pilih bentuk:</strong></label> <select id="arShape" class="arselect"><option value="0">Prisma segi empat sama (kubus)</option><option value="1">Prisma segi empat tepat (kuboid)</option><option value="2">Prisma segi tiga</option></select><div class="arstage"><div class="modelbox"><iframe id="modelFrame" src="model3d.html?embedded=1" title="Model prisma 3D interaktif" loading="eager"></iframe><svg id="arModel" viewBox="0 0 145 125" style="display:none" aria-hidden="true"></svg></div><div class="arcontrols"><button id="rotateLeft">↶ Putar kiri</button><button id="rotateRight">Putar kanan ↷</button><button id="resetRotate">⟲ Asal</button></div></div><p class="arnote">Putar model 3D menggunakan butang atau seret objek dengan jari/tetikus. Ini paparan 3D interaktif; AR kamera dibuka melalui Makmal AR pada peranti yang serasi.</p><div class="arlink"><input id="arUrl" type="url" placeholder="Tampal pautan HTTPS model AR (pilihan)" aria-label="Pautan model AR sebenar"><button id="saveARLink">Simpan pautan</button><button id="openARLink" disabled>Buka AR ↗</button></div><p class="small">Pautan AR disimpan pada pelayar/peranti ini sahaja. Pautan perlu diuji pada peranti murid.</p><p><strong>Soalan penyiasatan:</strong> Antara tiga bentuk ini, yang manakah mempunyai dua tapak berbentuk segi tiga?</p><div class="answers" id="arAnswers"></div><p class="feedback" id="arFeedback" aria-live="polite"></p><button class="btn" id="arFinish" hidden>🏅 Tamatkan Misi 1</button></div></section><section class="game" id="detective" hidden aria-label="Misi 2 Detektif Prisma"><div class="gamepanel"><div class="gamebar"><span class="pill" id="detectRound">🔎 Bukti 1 / 3</span><button class="btn secondary" id="exitDetect">← Peta</button></div><h2>🕵️ Misi 2: Detektif Prisma</h2><p>Comel menjumpai tiga fail penyiasatan! Putar objek 3D dan kira ciri bentuk untuk mengumpul tiga cap detektif.</p><p class="detectprogress" id="detectStamps">🔍 Cap dikumpul: 0 / 3</p><iframe class="detectmodel" id="detectFrame" src="model3d.html?embedded=1" title="Bentuk 3D untuk penyiasatan"></iframe><div class="arcontrols"><button id="detectLeft">↶ Putar kiri</button><button id="detectRight">Putar kanan ↷</button><button id="detectReset">⟲ Asal</button></div><p class="detectnote">Seret model untuk melihat semua permukaan. *Garis tepi* ialah garis pertemuan dua permukaan, manakala *bucu* ialah titik pertemuan garis tepi.</p><p class="detectclue" id="detectClue"></p><div class="detectgrid" id="detectChoices"></div><p class="feedback" id="detectFeedback" aria-live="polite"></p><button class="btn" id="detectNext" hidden>Fail seterusnya →</button><div id="detectComplete" hidden><div class="detectbadge">🏅</div><h3>Tahniah, Detektif Prisma!</h3><p>Kamu berjaya menyelesaikan ketiga-tiga fail penyiasatan.</p><button class="btn" id="detectReturn">🗺️ Kembali ke Peta</button></div></div></section><div class="veil" id="veil" hidden><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div style="font-size:42px" id="dialogIcon">🌳</div><h2 id="dialogTitle">Misi 1: Peneroka Bentuk</h2><p id="dialogText">Aina dan Comel telah tiba! Di sini, kita akan membina aktiviti mencari dan mengenal tiga jenis prisma berdasarkan modul AR-Geo.</p><p class="small" id="dialogFoot">Cabaran Misi 1 akan dimasukkan pada Langkah 2.</p><button class="btn" id="play">🎮 Main Cabaran 1</button> <button class="btn secondary" id="close">Kembali ke Peta</button></section></div><section class="game" id="mission3" hidden aria-label="Misi 3 Penyiasat Prisma"><div class="gamepanel"><div class="gamebar"><span class="pill" id="m3round">🧭 Situasi 1 / 3</span><button class="btn secondary" id="m3exit">← Peta</button></div><h2>🧺 Misi 3: Penyiasat Prisma</h2><p>Aina dan Comel tiba di Kampung Bentuk! Bantu penduduk memilih objek harian berdasarkan bentuk 3D.</p><div id="m3scene" style="font-size:56px;margin:12px 0">🎁</div><p class="pill" id="m3story" style="white-space:normal;line-height:1.6"></p><p id="m3question" style="font-weight:800"></p><div id="m3choices" class="answers"></div><p class="feedback" id="m3feedback" aria-live="polite"></p><button class="btn" id="m3next" hidden>Situasi seterusnya →</button><div id="m3reward" hidden><div style="font-size:70px">🏅✨</div><h3>Lencana Penyiasat Prisma!</h3><p>Hebat! Kamu berjaya menghubungkan bentuk prisma dengan objek di sekeliling.</p><button class="btn" id="m3finish">Kembali ke Peta 🗺️</button></div></div></section><section class="game" id="mission4" hidden aria-label="Misi 4 Pereka Poligon"><div class="gamepanel"><div class="gamebar"><span class="pill" id="p4round">✏️ Reka bentuk 1 / 3</span><button class="btn secondary" id="p4exit">← Peta</button></div><h2>🎨 Misi 4: Pereka Poligon</h2><p>Comel kehilangan pelan Taman Poligon! Bantu Aina membina bentuk dengan menyambungkan titik pada papan lukisan.</p><p id="p4task" style="font-weight:800;color:#75491c"></p><div style="background:#f5fbf6;border:3px solid #a4c9a9;border-radius:20px;padding:8px;max-width:480px;margin:auto"><svg id="p4board" viewBox="0 0 360 290" role="img" aria-label="Papan bina poligon. Tekan titik grid untuk membina bentuk" style="display:block;width:100%;touch-action:manipulation;cursor:crosshair"></svg></div><p class="small">Tekan titik pada grid mengikut turutan. Tekan titik pertama sekali lagi untuk menutup bentuk.</p><div class="arcontrols" style="margin:12px"><button id="p4undo">↶ Undur satu titik</button><button id="p4clear">⟲ Lukis semula</button><button id="p4hint">💡 Contoh</button></div><p class="feedback" id="p4feedback" aria-live="polite"></p><button class="btn" id="p4next" hidden>Bentuk seterusnya →</button><div id="p4reward" hidden><div style="font-size:64px">🏅🎨</div><h3>Lencana Pereka Poligon!</h3><p>Syabas! Kamu berjaya membina segi tiga, segi empat tepat dan segi lima.</p><button class="btn" id="p4finish">Kembali ke Peta 🗺️</button></div></div></section><section class="game" id="mission5" hidden aria-label="Misi 5 Pakar Simetri"><div class="gamepanel"><div class="gamebar"><span class="pill" id="p5round">🪞 Cermin 1 / 3</span><button class="btn secondary" id="p5exit">← Peta</button></div><h2>🪞 Misi 5: Pakar Simetri</h2><p>Aina menemui Cermin Ajaib! Bahagian kiri corak sudah siap. <strong>Sentuh petak di sebelah kanan</strong> supaya kedua-dua bahagian menjadi imej cermin.</p><p id="p5task" style="font-weight:800;color:#75491c"></p><div style="max-width:440px;margin:auto;background:#e9f6ee;border:3px solid #9dc9b0;border-radius:20px;padding:10px"><svg id="p5board" viewBox="0 0 420 336" role="img" aria-label="Grid simetri. Tekan petak kanan untuk melengkapkan corak" style="width:100%;display:block;touch-action:manipulation"></svg></div><p class="small">Garis putus-putus di tengah ialah paksi simetri. Petak berwarna di kiri ialah petunjuk.</p><div class="arcontrols" style="margin:12px"><button id="p5hint">💡 Semak satu petak</button><button id="p5clear">⟲ Cuba semula</button></div><p class="feedback" id="p5feedback" aria-live="polite"></p><button class="btn" id="p5next" hidden>Corak seterusnya →</button><div id="p5reward" hidden><div style="font-size:64px">🏅🪞✨</div><h3>Lencana Pakar Simetri!</h3><p>Hebat! Kamu berjaya menghasilkan tiga corak simetri.</p><button class="btn" id="p5finish">Kembali ke Peta 🗺️</button></div></div></section><section class="game" id="mission6" hidden aria-label="Misi 6 Master Penyelesaian Masalah"><div class="gamepanel"><div class="gamebar"><span class="pill" id="p6round">🏆 Cabaran 1 / 3</span><button class="btn secondary" id="p6exit">← Peta</button></div><h2>🏆 Misi 6: Master Penyelesaian Masalah</h2><p>Aina dan Comel tiba di Kampung Geometri. Gunakan pengetahuan tentang prisma, poligon dan simetri untuk membantu penduduk kampung!</p><div id="p6scene" style="font-size:clamp(38px,8vw,68px);padding:8px;background:#edf7ec;border-radius:20px" aria-hidden="true"></div><h3 id="p6story" style="color:#704b2c"></h3><p id="p6question" style="font-weight:750"></p><div class="answers" id="p6choices" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px"></div><p class="feedback" id="p6feedback" aria-live="polite"></p><button class="btn" id="p6next" hidden>Cabaran seterusnya →</button><div id="p6reward" hidden><div style="font-size:70px">🏆🎉🌟</div><h2>Master AR-Geo!</h2><p>Syabas! Kamu berjaya melengkapkan keenam-enam misi pengembaraan Aina dan Comel.</p><p><strong>🏅 Lencana Akhir: Master Penyelesaian Masalah</strong></p><button class="btn" id="p6finish">🗺️ Kembali ke Peta</button></div></div></section><script>
+(function(){'use strict';const traveler=document.getElementById('traveler'),status=document.getElementById('status'),start=document.getElementById('start'),veil=document.getElementById('veil');let busy=false;let mission2Unlocked=false;let mission3Unlocked=false;let mission4Unlocked=false;let mission5Unlocked=false;let mission6Unlocked=false;function show(title,msg,icon,foot){document.getElementById('play').textContent='🧭 Mula Misi 1';document.getElementById('play').hidden=false;document.getElementById('dialogTitle').textContent=title;document.getElementById('dialogText').textContent=msg;document.getElementById('dialogIcon').textContent=icon;document.getElementById('dialogFoot').textContent=foot;veil.hidden=false}function go(){if(busy)return;busy=true;start.disabled=true;veil.hidden=true;status.textContent='Aina dan Comel sedang menuju ke Misi 1…';traveler.classList.add('walk');traveler.style.left='37.5%';traveler.style.top='53.5%';setTimeout(function(){traveler.classList.remove('walk');busy=false;start.disabled=false;status.textContent='🌟 Tiba di Misi 1 — Peneroka Bentuk!';show('Misi 1: Peneroka Bentuk','Aina dan Comel menemui tiga bentuk misteri! Bantu mereka mengenal pasti prisma segi empat sama, prisma segi empat tepat dan prisma segi tiga.','🌳','Tekan Mula Misi 1 untuk melihat menu pilihan cabaran.');},2900)}start.addEventListener('click',go);document.querySelectorAll('[data-stop]').forEach(function(b){b.addEventListener('click',function(){let n=Number(b.dataset.stop);if(n===1){go()}else if(n===2&&mission2Unlocked){openDetective()}else if(n===3&&mission3Unlocked){openMission3()}else if(n===4&&mission4Unlocked){openMission4()}else if(n===5&&mission5Unlocked){openMission5()}else if(n===6&&mission6Unlocked){openMission6()}else{show('Misi '+n+' masih berkunci','Selesaikan misi sebelumnya untuk membuka checkpoint ini.','🔒','Selesaikan cabaran sebelumnya untuk membuka misi ini.')}})});const game=document.getElementById('game'), grid=document.getElementById('shapegrid'),next=document.getElementById('next'), feedback=document.getElementById('feedback');let round=0,score=0,answered=false;let matchingDone=false;const shapes=[{name:'Prisma segi empat sama',svg:'<polygon points="25,44 72,24 119,44 72,64" fill="#ffd6dd" stroke="#a94c61" stroke-width="2.7" stroke-linejoin="round"/><polygon points="25,44 72,64 72,112 25,92" fill="#ee92a3" stroke="#a94c61" stroke-width="2.7" stroke-linejoin="round"/><polygon points="72,64 119,44 119,92 72,112" fill="#d66c82" stroke="#a94c61" stroke-width="2.7" stroke-linejoin="round"/>'},{name:'Prisma segi empat tepat',svg:'<polygon points="15,47 89,22 132,40 58,65" fill="#ffe5a9" stroke="#b27b2c" stroke-width="2.7" stroke-linejoin="round"/><polygon points="15,47 58,65 58,105 15,87" fill="#f8be68" stroke="#b27b2c" stroke-width="2.7" stroke-linejoin="round"/><polygon points="58,65 132,40 132,80 58,105" fill="#e89a3b" stroke="#b27b2c" stroke-width="2.7" stroke-linejoin="round"/>'},{name:'Prisma segi tiga',svg:'<polygon points="18,101 43,87 125,87 100,101" fill="#9271be" stroke="#7950a9" stroke-width="2.6" stroke-linejoin="round"/><polygon points="52,33 77,19 125,87 100,101" fill="#ac85d5" stroke="#7950a9" stroke-width="2.6" stroke-linejoin="round"/><polygon points="18,101 52,33 100,101" fill="#dfc3f5" stroke="#7950a9" stroke-width="2.8" stroke-linejoin="round"/>'}];const order=[0,2,1];function renderRound(){answered=false;feedback.textContent='Pilih gambar yang betul.';next.hidden=true;document.getElementById('round').textContent='Padanan '+(round+1)+' / 3';document.getElementById('prompt').textContent='Cari '+shapes[order[round]].name.toLowerCase()+'.';grid.innerHTML='';shapes.forEach((sh,i)=>{let b=document.createElement('button');b.className='shapechoice';b.innerHTML='<svg viewBox="0 0 145 125" aria-hidden="true">'+sh.svg+'</svg><span>Bentuk '+String.fromCharCode(65+i)+'</span>';b.addEventListener('click',()=>{if(answered)return;if(i===order[round]){answered=true;score++;feedback.textContent='🌟 Tepat! Ini '+sh.name+'.';Array.from(grid.children).forEach(x=>x.disabled=true);next.hidden=false;next.textContent=round===2?'Selesai Cabaran 1 ✓':'Padanan seterusnya →'}else{feedback.textContent='💛 Belum tepat. Cuba perhatikan bentuk dan tapaknya sekali lagi.'}});grid.appendChild(b)})}function beginGame(){veil.hidden=true;game.hidden=false;round=0;score=0;renderRound()}document.getElementById('play').addEventListener('click',function(){if(arDone){showBadge()}else if(solved.every(Boolean)){beginAR()}else if(matchingDone){beginMystery()}else{beginGame()}});document.getElementById('exitGame').addEventListener('click',()=>{game.hidden=true;status.textContent='Cabaran dihentikan. Klik Misi 1 untuk sambung semula.'});// Tamat Misi 1: kembali ke peta; perjalanan ke Misi 2 hanya dengan NEXT pada peta.
+next.addEventListener('click',function(ev){
+ if(round!==2||!answered)return;
+ ev.stopImmediatePropagation();
+ matchingDone=true;
+ game.hidden=true;veil.hidden=true;
+ document.getElementById('progress').textContent='✓ Cabaran 1 / 3 selesai';
+ status.textContent='Bagus! Cabaran 1 selesai. Pilih cabaran seterusnya dalam menu Misi 1.';
+ document.dispatchEvent(new CustomEvent('argeo:completed',{detail:{mission:1,game:0}}));
+},true);
+next.addEventListener('click',()=>{if(round<2){round++;renderRound()}else{game.hidden=true;matchingDone=true;document.getElementById('progress').textContent='🌟 Cabaran 1 selesai';status.textContent='Cabaran 1 selesai. Sekarang buka tiga peti misteri!';show('🔐 Cabaran 2: Siapa Saya?','Bagus! Kamu sudah mengenal tiga prisma. Comel telah menemui tiga peti misteri. Buka peti dan baca petunjuk untuk mendapatkan kunci.','🗝️','Tekan Main Cabaran 2 untuk meneruskan.')}});document.getElementById('close').addEventListener('click',function(){veil.hidden=true});const mystery=document.getElementById('mystery'),chests=document.getElementById('chests'),question=document.getElementById('mysteryQuestion'),clue=document.getElementById('clue'),answers=document.getElementById('answers'),mFeedback=document.getElementById('mysteryFeedback'),mNext=document.getElementById('mysteryNext'),finish=document.getElementById('finishMission');const riddles=[{clue:'Saya mempunyai enam permukaan rata yang semuanya berbentuk segi empat sama. Siapakah saya?',answer:0},{clue:'Saya mempunyai enam permukaan rata berbentuk segi empat tepat. Saya seperti sebuah kotak kasut. Siapakah saya?',answer:1},{clue:'Saya mempunyai dua tapak berbentuk segi tiga yang sama bentuk dan saiz. Siapakah saya?',answer:2}];let solved=[false,false,false],active=-1,attempted=false;function drawChests(){chests.innerHTML='';riddles.forEach(function(r,i){const b=document.createElement('button');b.className='chest';b.disabled=solved[i];b.innerHTML=(solved[i]?'🔓':'🧰')+'<small>Peti '+(i+1)+(solved[i]?' ✓':'')+'</small>';b.addEventListener('click',function(){openChest(i)});chests.appendChild(b)});document.getElementById('keyCount').textContent=solved.filter(Boolean).length}function beginMystery(){veil.hidden=true;game.hidden=true;mystery.hidden=false;drawChests();question.classList.add('hidden');mNext.classList.add('hidden');finish.classList.toggle('hidden',!solved.every(Boolean));mFeedback.textContent=solved.every(Boolean)?'Semua peti berjaya dibuka!':'Pilih satu peti untuk bermula.'}function openChest(i){active=i;attempted=false;question.classList.remove('hidden');clue.textContent='PETUNJUK '+(i+1)+': '+riddles[i].clue;mFeedback.textContent='Pilih jawapan berdasarkan petunjuk.';mNext.classList.add('hidden');answers.innerHTML='';shapes.forEach(function(sh,j){const b=document.createElement('button');b.textContent=sh.name;b.addEventListener('click',function(){if(attempted)return;if(j===riddles[i].answer){attempted=true;solved[i]=true;mFeedback.textContent='🌟 Tepat! Kunci '+(i+1)+' berjaya diperoleh.';Array.from(answers.children).forEach(x=>x.disabled=true);mNext.classList.remove('hidden');drawChests()}else{mFeedback.textContent='💛 Belum tepat. Cuba perhatikan petunjuk dan pilih semula.'}});answers.appendChild(b)})}mNext.addEventListener('click',function(){question.classList.add('hidden');mNext.classList.add('hidden');if(solved.every(Boolean)){finish.classList.remove('hidden');mFeedback.textContent='🎉 Tiga kunci berjaya dikumpulkan!'}else{mFeedback.textContent='Bagus! Pilih peti misteri seterusnya.'}});finish.addEventListener('click',function(){mystery.hidden=true;veil.hidden=true;document.dispatchEvent(new CustomEvent('argeo:completed',{detail:{mission:1,game:1}}));});document.getElementById('exitMystery').addEventListener('click',function(){mystery.hidden=true;status.textContent='Peti misteri boleh disambung dengan klik Misi 1.'});document.getElementById('modelFrame').addEventListener('load',function(){paintModel()});const arGame=document.getElementById('arGame'),arModel=document.getElementById('arModel'),arShape=document.getElementById('arShape'),arAnswers=document.getElementById('arAnswers'),arFeedback=document.getElementById('arFeedback'),arFinish=document.getElementById('arFinish');let arDone=false,angle=0;function sendModel(cmd){const f=document.getElementById('modelFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({arGeo3d:cmd},'*')}function paintModel(){sendModel({type:'shape',value:['cube','cuboid','tri'][Number(arShape.value)]})}function beginAR(){veil.hidden=true;mystery.hidden=true;arGame.hidden=false;arFeedback.textContent='Putarkan bentuk dan jawab soalan.';arFinish.hidden=true;arAnswers.innerHTML='';paintModel();shapes.forEach(function(sh,i){let b=document.createElement('button');b.textContent=sh.name;b.addEventListener('click',function(){if(i===2){arFeedback.textContent='🌟 Tepat! Prisma segi tiga mempunyai dua tapak berbentuk segi tiga.';arFinish.hidden=false;Array.from(arAnswers.children).forEach(x=>x.disabled=true)}else{arFeedback.textContent='💛 Cuba lagi. Perhatikan bentuk tapaknya.'}});arAnswers.appendChild(b)})}arShape.addEventListener('change',function(){angle=0;paintModel()});document.getElementById('rotateLeft').addEventListener('click',function(){sendModel({type:'rotate',delta:-0.45})});document.getElementById('rotateRight').addEventListener('click',function(){sendModel({type:'rotate',delta:0.45})});document.getElementById('resetRotate').addEventListener('click',function(){sendModel({type:'reset'})});document.getElementById('exitAR').addEventListener('click',function(){arGame.hidden=true;document.getElementById('arGeoMenuOverlay').hidden=false;status.textContent='Cabaran 3 boleh disambung melalui Misi 1.'});const arUrl=document.getElementById('arUrl'),openAR=document.getElementById('openARLink');try{arUrl.value=localStorage.getItem('argeo_ar_url')||''}catch(e){}openAR.disabled=!/^https:\/\//i.test(arUrl.value);document.getElementById('saveARLink').addEventListener('click',function(){const url=arUrl.value.trim();if(!/^https:\/\//i.test(url)){arFeedback.textContent='Masukkan pautan AR yang bermula dengan https://';openAR.disabled=true;return}try{localStorage.setItem('argeo_ar_url',url)}catch(e){}openAR.disabled=false;arFeedback.textContent='Pautan disimpan pada pelayar ini. Sila uji pada peranti murid.'});openAR.addEventListener('click',function(){const url=arUrl.value.trim();if(/^https:\/\//i.test(url)){window.open(url,'_blank','noopener,noreferrer')}});function showBadge(){mission2Unlocked=true;unlockSecond();arGame.hidden=true;document.getElementById('progress').textContent='🏅 Misi 1 selesai';status.textContent='🎉 Misi 1 selesai! Lencana Peneroka Bentuk diperoleh.';show('🏅 Lencana Peneroka Bentuk','Tahniah! Kamu telah menyelesaikan Cari Pasangan Saya, Peti Misteri dan Teroka Prisma.','🏆','Misi 2 Detektif Prisma kini terbuka pada peta!');document.getElementById('play').hidden=true;refreshMapNext()}arFinish.addEventListener('click',function(){arDone=true;arGame.hidden=true;veil.hidden=true;document.dispatchEvent(new CustomEvent('argeo:completed',{detail:{mission:1,game:2}}));});
+// NEXT yang jelas pada PETA (bukan di bawah skrin). Klik untuk gerakkan dua kepala.
+const mapNext=document.getElementById('mapNext');
+let mapPosition=0;
+let mapArrowTravel=false;
+let finishedAll=false;
+// Titik penanda merah mengikut turutan sebenar laluan peta (bukan pusat papan misi).
+const arGeoStops={0:[6,40],1:[39,52],2:[62,47],3:[80,49],4:[90,55],5:[72,80],6:[34,75]};
+traveler.style.left='6%';traveler.style.top='40%';
+const mapArrowPositions={0:[14,44],1:[49,53],2:[69,47],3:[80,57],4:[83,63],5:[62,78],6:[34,75]};
+function refreshMapNext(){
+ const next=mapPosition===6?0:mapPosition+1;
+ const xy=mapArrowPositions[mapPosition];
+ mapNext.style.left=xy[0]+'%';mapNext.style.top=xy[1]+'%';
+ const leftwards=mapPosition>=4&&mapPosition<=6;
+ const arrow=leftwards?'⬅':'➜';
+ const destination=next===0?'MULA':'Misi '+next;
+ mapNext.textContent=mapPosition===0?'Misi 1':(leftwards?arrow+' NEXT ':'NEXT '+arrow+' ')+destination;
+ const allowed=next===1||(next===2&&mission2Unlocked)||(next===3&&mission3Unlocked)||(next===4&&mission4Unlocked)||(next===5&&mission5Unlocked)||(next===6&&mission6Unlocked)||(next===0&&finishedAll);
+ mapNext.disabled=!allowed;
+ mapNext.classList.toggle('mission-locked',!allowed);
+ mapNext.setAttribute('aria-label',allowed?'Gerakkan Aina dan Comel ke '+destination:'Berkunci: selesaikan Misi '+mapPosition+' dahulu');
+ mapNext.title=allowed?'Teruskan ke '+destination:'🔒 Selesaikan Misi '+mapPosition+' dahulu';
+ mapNext.textContent=allowed?mapNext.textContent:'🔒 '+destination+' · Selesaikan misi dahulu';
+ mapNext.hidden=false;
+}
+mapNext.addEventListener('click',function(){
+ if(arGeoMoving||mapNext.disabled)return;
+ const next=mapPosition===6?0:mapPosition+1;
+ // Jangan sekali-kali membuka misi hanya kerana NEXT ditekan.
+ const allowed=next===1||(next===2&&mission2Unlocked)||(next===3&&mission3Unlocked)||(next===4&&mission4Unlocked)||(next===5&&mission5Unlocked)||(next===6&&mission6Unlocked)||(next===0&&finishedAll);
+ if(!allowed){status.textContent='🔒 Selesaikan Misi '+mapPosition+' dahulu sebelum bergerak.';refreshMapNext();return}
+ mapNext.disabled=true;
+ mapArrowTravel=true;
+ // Kekalkan label destinasi semasa sehingga animasi benar-benar selesai.
+ arGeoTravel(next);
+});
+refreshMapNext();
+// Mod jelajah untuk menguji animasi tanpa menamatkan semua kuiz.
+let arGeoDemo=false;
+const demoBtn=document.getElementById('demoTravel');
+demoBtn.addEventListener('click',function(){
+ arGeoDemo=false;
+ demoBtn.textContent=arGeoDemo?'🗺️ Mod Jelajah Peta: ON':'🗺️ Mod Jelajah Peta: OFF';
+ status.textContent=arGeoDemo?'🧭 Mod Jelajah aktif. Tekan mana-mana papan Misi 1–6 untuk melihat Aina dan Comel bergerak.':'🔐 Mod pembelajaran aktif. Selesaikan misi sebelumnya untuk membuka misi seterusnya.';
+ document.querySelectorAll('[data-stop]').forEach(b=>{if(Number(b.dataset.stop)>1)b.classList.toggle('demo-open',arGeoDemo)});
+});
+// PEMBETULAN: Gerakkan penanda Aina dan Comel ke checkpoint yang telah dibuka.
+let arGeoMoving=false;
+function arGeoTravel(n){
+ if(arGeoMoving)return;
+ const allowed={2:mission2Unlocked,3:mission3Unlocked,4:mission4Unlocked,5:mission5Unlocked,6:mission6Unlocked};
+ if(n!==0&&n!==1&&!allowed[n])return;
+ arGeoMoving=true;veil.hidden=true;
+ ['game','mystery','arGame','detective','mission3','mission4','mission5','mission6'].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true});
+ const [x,y]=arGeoStops[n];
+ traveler.classList.add('walk');
+ mapNext.hidden=true;
+ status.textContent='🚶 Aina dan Comel sedang menuju ke '+(n===0?'MULA':'Misi '+n)+'…';
+ // Dari MULA ke Misi 1, ikut selekoh laluan bertitik pada ilustrasi peta.
+ // Satu titik bergerak pada satu masa; penguncian NEXT kekal sepanjang perjalanan.
+ const followDottedPath=(n===1&&mapPosition===0);
+ const pathPoints=followDottedPath?[[6,40],[6.7,47],[9,53],[13,57],[19,59],[25,59],[31,56],[35,53],[x,y]]:[[x,y]];
+ const segmentMs=followDottedPath?540:2900;
+ const oldTransition=traveler.style.transition;
+ if(followDottedPath){
+  traveler.style.transition='left '+segmentMs+'ms linear, top '+segmentMs+'ms linear';
+ }
+ function finishTravel(){
+  traveler.style.transition=oldTransition;
+  traveler.classList.remove('walk');arGeoMoving=false;
+  // Satu sumber kebenaran: destinasi semasa berubah hanya SELEPAS tiba.
+  mapPosition=n;
+  mapArrowTravel=false;
+  refreshMapNext();
+  try{localStorage.setItem('argeo_map_location_v2',String(n))}catch(e){}
+  status.textContent='🌟 Tiba di '+(n===0?'MULA':'Misi '+n)+'!';
+  if(n===0){
+   status.textContent='🌟 Kembali ke MULA! Tekan NEXT untuk memulakan perjalanan semula.';
+  }else if(n===1){
+   status.textContent='🌟 Tiba di Misi 1 — Peneroka Bentuk!';
+   show('Misi 1: Peneroka Bentuk','Aina dan Comel menemui tiga bentuk misteri! Bantu mereka mengenal pasti prisma segi empat sama, prisma segi empat tepat dan prisma segi tiga.','🌳','Tekan Mula Misi 1 untuk melihat menu pilihan cabaran.');
+  }else if(arGeoDemo&&!allowed[n]){status.textContent='🌟 Tiba di Misi '+n+'! Mod Jelajah: pergerakan berjaya. Tekan papan misi lain untuk terus menguji.';}else{({2:showMission2Intro,3:showMission3Intro,4:showMission4Intro,5:showMission5Intro,6:showMission6Intro})[n]();}
+ }
+ if(followDottedPath){
+  // Titik mula ialah koordinat penanda asal, kemudian laluan dilalui berurutan.
+  let step=1;
+  function moveAlongDots(){
+   const p=pathPoints[step];
+   traveler.style.left=p[0]+'%';traveler.style.top=p[1]+'%';
+   step++;
+   if(step<pathPoints.length)setTimeout(moveAlongDots,segmentMs);
+   else setTimeout(finishTravel,segmentMs+80);
+  }
+  moveAlongDots();
+ }else{
+  traveler.style.left=x+'%';traveler.style.top=y+'%';
+  setTimeout(finishTravel,2900);
+ }
+}
+// Laluan utama yang jelas: dari Misi 1 ke Misi 2, tanpa bergantung pada mod jelajah.
+// Untuk ujian perjalanan, checkpoint Misi 2 dibuka sebaik tiba.
+document.getElementById('goMission2').addEventListener('click',function(){
+ if(arGeoMoving)return;
+ if(!mission2Unlocked){status.textContent='🔒 Selesaikan Misi 1 dahulu.';return}
+ arGeoTravel(2);
+});
+// Tangkap klik sebelum pengendali lama supaya animasi perjalanan dapat dilihat dahulu.
+document.querySelectorAll('[data-stop]').forEach(b=>b.addEventListener('click',function(ev){
+ const n=Number(b.dataset.stop);
+ const allowed={2:mission2Unlocked,3:mission3Unlocked,4:mission4Unlocked,5:mission5Unlocked,6:mission6Unlocked};
+ if(n!==mapPosition){ev.preventDefault();ev.stopImmediatePropagation();status.textContent='🔒 Gunakan anak panah NEXT selepas berjaya menyelesaikan misi semasa.';return}
+ if(n===2&&mission2Unlocked){ev.stopImmediatePropagation();showMission2Intro()}
+ else if(n===3&&mission3Unlocked){ev.stopImmediatePropagation();showMission3Intro()}
+ else if(n===4&&mission4Unlocked){ev.stopImmediatePropagation();showMission4Intro()}
+ else if(n===5&&mission5Unlocked){ev.stopImmediatePropagation();showMission5Intro()}
+ else if(n===6&&mission6Unlocked){ev.stopImmediatePropagation();showMission6Intro()}
+},true));
+// Butang sambung perjalanan dalam dialog lencana Misi 1.
+const arGeoContinue=document.createElement('button');
+arGeoContinue.className='btn';arGeoContinue.id='arGeoContinue';
+arGeoContinue.textContent='🗺️ Kembali ke Peta — NEXT ke Misi 2';
+arGeoContinue.hidden=true;
+const arGeoClose=document.getElementById('close');
+arGeoClose.parentNode.insertBefore(arGeoContinue,arGeoClose);
+arGeoContinue.addEventListener('click',()=>{
+ arGeoContinue.hidden=true;
+ veil.hidden=true;
+ status.textContent='🏅 Misi 1 berjaya! Sekarang tekan NEXT ➜ Misi 2 pada peta.';
+ refreshMapNext();
+});
+const arGeoVeilObserver=new MutationObserver(()=>{
+ arGeoContinue.hidden=!(mission2Unlocked&&!veil.hidden&&document.getElementById('dialogTitle').textContent.includes('Lencana Peneroka Bentuk'));
+});
+arGeoVeilObserver.observe(veil,{attributes:true,attributeFilter:['hidden']});
+document.getElementById('reset').addEventListener('click',function(){
+ setTimeout(()=>{mapPosition=0;traveler.style.left=arGeoStops[0][0]+'%';traveler.style.top=arGeoStops[0][1]+'%';refreshMapNext()},120);
+});
+document.getElementById('reset').addEventListener('click',function(){busy=false;arGeoMoving=false;mapPosition=0;mapArrowTravel=false;mapNext.disabled=false;refreshMapNext();try{localStorage.removeItem('argeo_map_location_v2')}catch(e){}arGeoContinue.hidden=true;start.disabled=false;traveler.style.transition='none';traveler.style.left='9%';traveler.style.top='53%';traveler.classList.remove('walk');veil.hidden=true;matchingDone=false;solved=[false,false,false];arDone=false;mission2Unlocked=false;lockSecond();mission3Unlocked=false;lockThird();mission4Unlocked=false;lockFourth();mission5Unlocked=false;lockFifth();mission6Unlocked=false;lockSixth();document.getElementById("mission5").hidden=true;document.getElementById("mission6").hidden=true;document.getElementById("mission4").hidden=true;document.getElementById("mission3").hidden=true;document.getElementById('detective').hidden=true;document.getElementById('arGame').hidden=true;document.getElementById('play').hidden=false;document.getElementById('progress').textContent='🧭 MULA → Misi 1';status.textContent='Kembali ke permulaan. Klik Misi 1 untuk mencuba lagi.';requestAnimationFrame(function(){requestAnimationFrame(function(){traveler.style.transition='left 2.8s ease-in-out,top 2.8s ease-in-out'})})});
+
+// Pengenalan Misi 3–6: tiba dahulu, kemudian murid memilih Main Cabaran 1.
+let arGeoPendingIntro=0;
+const arGeoIntroData={
+ 3:['Misi 3: Penyiasat Prisma','Aina dan Comel tiba di Kampung Bentuk! Bantu penduduk mengenal pasti objek harian yang mempunyai bentuk prisma.','🧺'],
+ 4:['Misi 4: Pereka Poligon','Comel memerlukan bantuan untuk membina Taman Poligon. Sambungkan titik untuk menghasilkan bentuk yang diminta.','🎨'],
+ 5:['Misi 5: Pakar Simetri','Mari bantu Aina dan Comel menyiasat bentuk serta corak yang mempunyai simetri.','🦋'],
+ 6:['Misi 6: Master Penyelesaian Masalah','Cabaran terakhir menanti! Gunakan pengetahuan geometri untuk menyelesaikan masalah bersama Aina dan Comel.','🏆']
+};
+function arGeoShowMissionIntro(n){
+ arGeoPendingIntro=n;
+ ['game','mystery','arGame','detective','mission3','mission4','mission5','mission6'].forEach(id=>{
+  const el=document.getElementById(id);if(el)el.hidden=true;
+ });
+ const data=arGeoIntroData[n];
+ document.getElementById('dialogTitle').textContent=data[0];
+ document.getElementById('dialogText').textContent=data[1];
+ document.getElementById('dialogIcon').textContent=data[2];
+ document.getElementById('dialogFoot').textContent='Tekan Mula Misi untuk memilih cabaran.';
+ const playButton=document.getElementById('play');
+ playButton.textContent='🧭 Mula Misi '+n;
+ playButton.hidden=false;
+ veil.hidden=false;
+}
+function showMission3Intro(){arGeoShowMissionIntro(3)}
+function showMission4Intro(){arGeoShowMissionIntro(4)}
+function showMission5Intro(){arGeoShowMissionIntro(5)}
+function showMission6Intro(){arGeoShowMissionIntro(6)}
+document.getElementById('play').addEventListener('click',function(event){
+ if(!arGeoPendingIntro)return;
+ event.stopImmediatePropagation();
+ const n=arGeoPendingIntro;
+ arGeoPendingIntro=0;
+ veil.hidden=true;
+ ({3:openMission3,4:openMission4,5:openMission5,6:openMission6})[n]();
+},true);
+document.getElementById('close').addEventListener('click',function(){arGeoPendingIntro=0});
+
+// Misi 2: dialog pengenalan sebelum permainan bermula.
+let arGeoMission2Intro=false;
+function showMission2Intro(){
+ arGeoMission2Intro=true;
+ ['game','mystery','arGame','detective','mission3','mission4','mission5','mission6'].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true});
+ document.getElementById('dialogTitle').textContent='Misi 2: Detektif Prisma';
+ document.getElementById('dialogText').textContent='Aina dan Comel tiba di Misi 2! Jadilah detektif bentuk 3D: perhatikan, putarkan dan kenal pasti ciri-ciri prisma untuk mengumpul bukti.';
+ document.getElementById('dialogIcon').textContent='🔎';
+ document.getElementById('dialogFoot').textContent='Tekan Mula Misi untuk memilih cabaran.';
+ const btn=document.getElementById('play');btn.textContent='🧭 Mula Misi 2';btn.hidden=false;
+ veil.hidden=false;
+}
+document.getElementById('play').addEventListener('click',function(ev){
+ if(!arGeoMission2Intro)return;
+ ev.stopImmediatePropagation();
+ arGeoMission2Intro=false;
+ veil.hidden=true;
+ openDetective();
+},true);
+document.getElementById('close').addEventListener('click',()=>{arGeoMission2Intro=false});
+const detect=document.getElementById('detective'),df=document.getElementById('detectFrame');
+const detectCases=[
+ {shape:'cube',title:'Fail 1 · Kubus Merah',question:'Berapa bilangan permukaan rata pada kubus?',options:[5,6,8],answer:6,explain:'Kubus mempunyai 6 permukaan rata berbentuk segi empat sama.'},
+ {shape:'cuboid',title:'Fail 2 · Kuboid Turquoise',question:'Berapa bilangan garis tepi pada kuboid?',options:[8,12,10],answer:12,explain:'Kuboid mempunyai 12 garis tepi.'},
+ {shape:'tri',title:'Fail 3 · Prisma Segi Tiga Kuning',question:'Berapa bilangan bucu pada prisma segi tiga?',options:[6,8,9],answer:6,explain:'Prisma segi tiga mempunyai 6 bucu, 9 garis tepi dan 5 permukaan.'}
+];
+let detectIndex=0,detectCorrect=false,detectStamps=0;
+document.addEventListener('argeo:claim1',function(){mission2Unlocked=true;unlockSecond();refreshMapNext();try{localStorage.setItem('argeo_misi1_selesai','1')}catch(e){}});
+function unlockSecond(){const b=document.querySelector('[data-stop="2"]');b.classList.remove('locked');b.classList.add('unlocked');b.setAttribute('aria-label','Buka Misi 2 Detektif Prisma');document.getElementById('progress').textContent='🔎 Destinasi 2 / 6';document.getElementById('status').textContent='🔓 Misi 2 dibuka! Klik papan Detektif Prisma pada peta.'}
+function lockSecond(){const b=document.querySelector('[data-stop="2"]');b.classList.add('locked');b.classList.remove('unlocked');b.setAttribute('aria-label','Misi 2 Detektif Prisma berkunci')}
+function sendDetect(cmd){if(df.contentWindow)df.contentWindow.postMessage({arGeo3d:cmd},'*')}
+function renderDetect(){detectCorrect=false;document.getElementById('detectRound').textContent='🔎 Bukti '+(detectIndex+1)+' / 3';document.getElementById('detectStamps').textContent='🔍 Cap dikumpul: '+detectStamps+' / 3';const c=detectCases[detectIndex];document.getElementById('detectClue').textContent=c.title+' — '+c.question;document.getElementById('detectFeedback').textContent='Putar dan perhatikan bentuk sebelum memilih jawapan.';document.getElementById('detectNext').hidden=true;document.getElementById('detectComplete').hidden=true;df.hidden=false;document.getElementById('detectChoices').hidden=false;document.getElementById('detectClue').hidden=false;document.querySelectorAll('#detectLeft,#detectRight,#detectReset').forEach(b=>b.hidden=false);sendDetect({type:'shape',value:c.shape});const choices=document.getElementById('detectChoices');choices.innerHTML='';c.options.forEach(n=>{const b=document.createElement('button');b.textContent=n;b.setAttribute('aria-label',n+' ciri');b.addEventListener('click',()=>{if(detectCorrect)return;if(n===c.answer){detectCorrect=true;detectStamps++;document.getElementById('detectStamps').textContent='🌟 Cap dikumpul: '+detectStamps+' / 3';document.getElementById('detectFeedback').textContent='🌟 Betul! '+c.explain;Array.from(choices.children).forEach(x=>x.disabled=true);document.getElementById('detectNext').hidden=false;document.getElementById('detectNext').textContent=detectIndex===2?'🏅 Lihat Lencana Detektif':'Fail seterusnya →'}else{document.getElementById('detectFeedback').textContent='💛 Cuba lagi. Putar bentuk dan kira satu persatu.'}});choices.appendChild(b)})}
+
+document.addEventListener('argeo:launchDetect',function(e){
+ const i=e.detail.index;if(!Number.isInteger(i)||i<0||i>2)return;
+ openDetective();detectIndex=i;detectStamps=i;renderDetect();
+});
+document.getElementById('detectNext').addEventListener('click',function(e){
+ if(!detectCorrect)return;
+ e.stopImmediatePropagation();e.preventDefault();
+ detect.hidden=true;veil.hidden=true;
+ document.dispatchEvent(new CustomEvent('argeo:completed',{detail:{mission:2,game:detectIndex}}));
+},true);
+document.addEventListener('argeo:claim2',function(){
+ if(!mission2Unlocked)return;
+ mission3Unlocked=true;unlockThird();refreshMapNext();storeCheckpoint();
+});
+function openDetective(){veil.hidden=true;game.hidden=true;mystery.hidden=true;arGame.hidden=true;detect.hidden=false;detectIndex=0;detectStamps=0;renderDetect()}
+df.addEventListener('load',()=>{if(!detect.hidden)sendDetect({type:'shape',value:detectCases[detectIndex].shape})});
+document.getElementById('detectLeft').addEventListener('click',()=>sendDetect({type:'rotate',delta:-0.45}));document.getElementById('detectRight').addEventListener('click',()=>sendDetect({type:'rotate',delta:0.45}));document.getElementById('detectReset').addEventListener('click',()=>sendDetect({type:'reset'}));
+document.getElementById('exitDetect').addEventListener('click',()=>{detect.hidden=true});
+document.getElementById('detectNext').addEventListener('click',()=>{if(detectIndex<2){detectIndex++;renderDetect()}else{document.getElementById('detectRound').textContent='🏅 Misi 2 selesai';document.getElementById('detectClue').hidden=true;document.getElementById('detectChoices').hidden=true;document.getElementById('detectNext').hidden=true;df.hidden=true;document.querySelectorAll('#detectLeft,#detectRight,#detectReset').forEach(b=>b.hidden=true);document.getElementById('detectComplete').hidden=false;document.getElementById('detectFeedback').textContent='Ketiga-tiga bukti berjaya disahkan!';document.getElementById('status').textContent='🏅 Misi 2 Detektif Prisma selesai!';mission3Unlocked=true;unlockThird()}});
+document.getElementById('detectReturn').addEventListener('click',()=>{detect.hidden=true;document.getElementById('status').textContent='🏅 Tahniah! Misi 3 Penyiasat Prisma kini boleh dibuka pada peta.'});
+
+document.addEventListener('argeo:claim3',function(){mission4Unlocked=true;unlockFourth();refreshMapNext();storeCheckpoint();status.textContent='🏅 Misi 3 lengkap! Tekan NEXT ➜ Misi 4 pada peta.';});
+document.addEventListener('argeo:claim4',function(){mission5Unlocked=true;unlockFifth();refreshMapNext();storeCheckpoint();status.textContent='🏅 Misi 4 lengkap! Tekan NEXT ➜ Misi 5 pada peta.';});
+document.addEventListener('argeo:claim5',function(){mission6Unlocked=true;unlockSixth();refreshMapNext();storeCheckpoint();status.textContent='🏅 Misi 5 lengkap! Tekan NEXT ➜ Misi 6 pada peta.';});
+document.addEventListener('argeo:claim6',function(){finishedAll=true;refreshMapNext();storeCheckpoint();status.textContent='🏆 Tahniah! Semua enam misi AR-Geo selesai!';document.getElementById('arGeoFinalOverlay').hidden=false;});
+const m3=document.getElementById('mission3');
+const m3cases=[
+ {scene:'📦 🥫 🎾',story:'Comel mahu menyusun buku dan alat tulis di dalam sebuah bekas berbentuk kuboid.',question:'Objek manakah mempunyai bentuk yang paling sesuai?',choices:['Kotak kasut 📦','Tin minuman 🥫','Bola 🎾'],answer:0,explain:'Kotak kasut menyerupai kuboid yang mempunyai permukaan segi empat tepat.'},
+ {scene:'🎲 🍦 🥤',story:'Aina mencari objek yang menyerupai kubus untuk permainan matematik.',question:'Objek manakah berbentuk kubus?',choices:['Kon aiskrim 🍦','Dadu 🎲','Gelas minuman 🥤'],answer:1,explain:'Dadu lazimnya berbentuk kubus dengan enam permukaan segi empat sama.'},
+ {scene:'⛺ 🥫 ⚽',story:'Penduduk kampung mahu membina khemah yang mempunyai dua hujung berbentuk segi tiga.',question:'Objek manakah menyerupai prisma segi tiga?',choices:['Tin minuman 🥫','Bola sepak ⚽','Khemah berbentuk A ⛺'],answer:2,explain:'Khemah berbentuk A boleh menyerupai prisma segi tiga jika keratan rentasnya kekal sama sepanjang khemah.'}
+];
+let m3index=0,m3correct=false;
+function unlockThird(){const b=document.querySelector('[data-stop="3"]');b.classList.remove('locked');b.classList.add('unlocked');b.setAttribute('aria-label','Buka Misi 3 Penyiasat Prisma');document.getElementById('progress').textContent='🧺 Destinasi 3 / 6';document.getElementById('status').textContent='🔓 Misi 3 dibuka! Klik checkpoint Penyiasat Prisma.'}
+function lockThird(){const b=document.querySelector('[data-stop="3"]');b.classList.add('locked');b.classList.remove('unlocked');b.setAttribute('aria-label','Misi 3 Penyiasat Prisma berkunci')}
+function openMission3(){veil.hidden=true;detect.hidden=true;arGame.hidden=true;mystery.hidden=true;game.hidden=true;m3.hidden=false;m3index=0;document.getElementById('m3reward').hidden=true;document.getElementById('m3next').hidden=true;renderM3()}
+function renderM3(){m3correct=false;const c=m3cases[m3index];document.getElementById('m3round').textContent='🧭 Situasi '+(m3index+1)+' / 3';document.getElementById('m3scene').textContent=c.scene;document.getElementById('m3story').textContent=c.story;document.getElementById('m3question').textContent=c.question;document.getElementById('m3feedback').textContent='Pilih objek yang paling tepat.';document.getElementById('m3next').hidden=true;const area=document.getElementById('m3choices');area.hidden=false;area.innerHTML='';c.choices.forEach((label,i)=>{const b=document.createElement('button');b.textContent=label;b.addEventListener('click',()=>{if(m3correct)return;if(i===c.answer){m3correct=true;document.getElementById('m3feedback').textContent='🌟 Tepat! '+c.explain;Array.from(area.children).forEach(x=>x.disabled=true);document.getElementById('m3next').hidden=false;document.getElementById('m3next').textContent=m3index===2?'🏅 Terima lencana':'Situasi seterusnya →'}else{document.getElementById('m3feedback').textContent='💛 Belum tepat. Cuba fikirkan bentuk permukaan dan objek itu.'}});area.appendChild(b)})}
+document.getElementById('m3next').addEventListener('click',()=>{if(m3index<2){m3index++;renderM3()}else{document.getElementById('m3round').textContent='🏅 Misi 3 selesai';document.getElementById('m3scene').textContent='🎉';document.getElementById('m3story').textContent='Ketiga-tiga tugasan kampung berjaya diselesaikan!';document.getElementById('m3question').textContent='';document.getElementById('m3choices').hidden=true;document.getElementById('m3next').hidden=true;document.getElementById('m3reward').hidden=false;document.getElementById('m3feedback').textContent='';document.getElementById('status').textContent='🏅 Misi 3 Penyiasat Prisma selesai!'}});
+document.getElementById('m3exit').addEventListener('click',()=>{m3.hidden=true});document.getElementById('m3finish').addEventListener('click',()=>{m3.hidden=true;});
+
+// Misi 4: pembinaan poligon dengan grid interaktif
+const p4=document.getElementById('mission4'), board=document.getElementById('p4board');
+const p4tasks=[
+ {name:'Segi tiga',count:3,tip:'Pilih tiga titik yang tidak sebaris.',sample:[[90,65],[270,65],[180,225]]},
+ {name:'Segi empat tepat',count:4,tip:'Pilih empat bucu supaya empat sudutnya tepat.',sample:[[70,65],[290,65],[290,225],[70,225]]},
+ {name:'Segi lima',count:5,tip:'Pilih lima titik membentuk satu bentuk tertutup.',sample:[[180,45],[280,115],[245,235],[115,235],[80,115]]}
+];
+let p4idx=0,p4points=[],p4closed=false,p4hint=false;
+function unlockFourth(){const b=document.querySelector('[data-stop="4"]');b.classList.remove('locked');b.classList.add('unlocked');b.setAttribute('aria-label','Buka Misi 4 Pereka Poligon');document.getElementById('progress').textContent='🎨 Destinasi 4 / 6';document.getElementById('status').textContent='🔓 Misi 4 dibuka! Klik checkpoint Pereka Poligon.'}
+function lockFourth(){const b=document.querySelector('[data-stop="4"]');b.classList.add('locked');b.classList.remove('unlocked');b.setAttribute('aria-label','Misi 4 Pereka Poligon berkunci')}
+function openMission4(){veil.hidden=true;m3.hidden=true;p4.hidden=false;p4idx=0;document.getElementById('p4reward').hidden=true;renderP4Task()}
+function renderP4Task(){p4points=[];p4closed=false;p4hint=false;const t=p4tasks[p4idx];document.getElementById('p4round').textContent='✏️ Reka bentuk '+(p4idx+1)+' / 3';document.getElementById('p4task').textContent='Bina '+t.name+' dengan '+t.count+' bucu.';document.getElementById('p4feedback').textContent='Tekan titik grid untuk mula melukis.';document.getElementById('p4next').hidden=true;document.getElementById('p4board').hidden=false;document.querySelectorAll('#p4undo,#p4clear,#p4hint').forEach(b=>b.hidden=false);drawP4()}
+function near(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1])<17}
+function cross(a,b,c){return (b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])}
+function segmentsCross(a,b,c,d){return cross(a,b,c)*cross(a,b,d)<0&&cross(c,d,a)*cross(c,d,b)<0}
+function polygonOK(pts){let area=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];area+=a[0]*b[1]-b[0]*a[1]}if(Math.abs(area)<1200)return false;for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){if(j===i+1||(i===0&&j===pts.length-1))continue;if(segmentsCross(pts[i],pts[(i+1)%pts.length],pts[j],pts[(j+1)%pts.length]))return false}}return true}
+function rectangleOK(pts){if(pts.length!==4)return false;for(let i=0;i<4;i++){const prev=pts[(i+3)%4],cur=pts[i],next=pts[(i+1)%4];const ax=prev[0]-cur[0],ay=prev[1]-cur[1],bx=next[0]-cur[0],by=next[1]-cur[1];const cos=Math.abs((ax*bx+ay*by)/(Math.hypot(ax,ay)*Math.hypot(bx,by)));if(!Number.isFinite(cos)||cos>.18)return false}return true}
+function drawP4(){const ns='http://www.w3.org/2000/svg';board.replaceChildren();function el(tag,attrs){const e=document.createElementNS(ns,tag);Object.keys(attrs).forEach(k=>e.setAttribute(k,attrs[k]));board.appendChild(e);return e}el('rect',{x:0,y:0,width:360,height:290,fill:'#f6fff6'});for(let y=25;y<=265;y+=20){for(let x=20;x<=340;x+=20){el('circle',{cx:x,cy:y,r:3,fill:'#bad9c3'})}}if(p4hint){el('polygon',{points:p4tasks[p4idx].sample.map(p=>p.join(',')).join(' '),fill:'#f6d67a33',stroke:'#d9a33b', 'stroke-width':3,'stroke-dasharray':'8 7'})}if(p4points.length){el(p4closed?'polygon':'polyline',{points:p4points.map(p=>p.join(',')).join(' '),fill:p4closed?'#93d5d066':'none',stroke:'#238578','stroke-width':5,'stroke-linejoin':'round','stroke-linecap':'round'});p4points.forEach((p,i)=>{el('circle',{cx:p[0],cy:p[1],r:i===0?10:8,fill:i===0?'#f4ae4a':'#368f86',stroke:'white','stroke-width':3});if(i===0){const text=el('text',{x:p[0]+13,y:p[1]-11,'font-size':12,fill:'#80551e'});text.textContent='Mula'}})}}
+board.addEventListener('click',function(ev){if(p4closed)return;const rect=board.getBoundingClientRect(),x=(ev.clientX-rect.left)*360/rect.width,y=(ev.clientY-rect.top)*290/rect.height;let sx=Math.round((x-20)/20)*20+20,sy=Math.round((y-25)/20)*20+25;sx=Math.max(20,Math.min(340,sx));sy=Math.max(25,Math.min(265,sy));const p=[sx,sy],t=p4tasks[p4idx];if(p4points.length>=3&&near(p,p4points[0])){if(p4points.length!==t.count){document.getElementById('p4feedback').textContent='💛 '+t.name+' memerlukan '+t.count+' bucu. Sekarang ada '+p4points.length+'.';return}if(!polygonOK(p4points)){document.getElementById('p4feedback').textContent='💛 Garisan bersilang atau bentuk terlalu nipis. Cuba lukis semula.';return}if(t.name==='Segi empat tepat'&&!rectangleOK(p4points)){document.getElementById('p4feedback').textContent='💛 Bentuk ini belum mempunyai empat sudut tepat. Cuba lukis semula.';return}p4closed=true;document.getElementById('p4feedback').textContent='🌟 Hebat! '+t.name+' berjaya dibina dengan '+t.count+' bucu dan '+t.count+' sisi.';document.getElementById('p4next').hidden=false;drawP4();return}if(p4points.some(q=>near(q,p))){document.getElementById('p4feedback').textContent='Pilih titik yang lain atau tekan titik mula untuk menutup bentuk.';return}if(p4points.length>=t.count){document.getElementById('p4feedback').textContent='Sekarang tekan titik pertama (Mula) untuk menutup bentuk.';return}p4points.push(p);document.getElementById('p4feedback').textContent=p4points.length===t.count?'Tekan titik pertama (Mula) untuk menutup bentuk.':'Bagus! Pilih titik seterusnya.';drawP4()});
+document.getElementById('p4undo').addEventListener('click',()=>{if(p4closed)return;p4points.pop();drawP4()});document.getElementById('p4clear').addEventListener('click',()=>{p4points=[];p4closed=false;document.getElementById('p4next').hidden=true;document.getElementById('p4feedback').textContent='Mari cuba lagi!';drawP4()});document.getElementById('p4hint').addEventListener('click',()=>{p4hint=!p4hint;document.getElementById('p4feedback').textContent=p4hint?'Garis putus-putus ialah contoh. Bina sendiri dengan menekan titik grid.':'Sekarang cuba bina bentuk sendiri.';drawP4()});
+document.getElementById('p4next').addEventListener('click',()=>{if(p4idx<2){p4idx++;renderP4Task()}else{document.getElementById('p4round').textContent='🏅 Misi 4 selesai';document.getElementById('p4task').textContent='Tahniah, Pereka Poligon!';board.hidden=true;document.querySelectorAll('#p4undo,#p4clear,#p4hint').forEach(b=>b.hidden=true);document.getElementById('p4next').hidden=true;document.getElementById('p4reward').hidden=false;document.getElementById('p4feedback').textContent='';document.getElementById('status').textContent='🏅 Misi 4 Pereka Poligon selesai!'}});
+document.getElementById('p4exit').addEventListener('click',()=>{p4.hidden=true});document.getElementById('p4finish').addEventListener('click',()=>{p4.hidden=true;mission5Unlocked=true;unlockFifth();});
+
+// Misi 5: cermin ajaib interaktif. Paksi menegak di antara lajur 3 dan 4.
+const p5=document.getElementById('mission5'),p5board=document.getElementById('p5board');
+const p5tasks=[
+ {name:'Sayap Rama-rama',emoji:'🦋',left:[[0,1],[1,0],[1,1],[1,2],[2,1],[2,2],[3,2],[4,1],[4,2],[5,1]]},
+ {name:'Istana Aina',emoji:'🏰',left:[[0,2],[1,1],[1,2],[2,0],[2,1],[2,2],[3,0],[3,1],[3,2],[4,0],[4,1],[4,2],[5,1],[5,2]]},
+ {name:'Bintang Comel',emoji:'⭐',left:[[0,2],[1,2],[2,0],[2,1],[2,2],[3,1],[3,2],[4,1],[4,2],[5,0],[5,2]]}
+];
+let p5idx=0,p5selected=new Set(),p5done=false;
+function unlockFifth(){const b=document.querySelector('[data-stop="5"]');b.classList.remove('locked');b.classList.add('unlocked');b.setAttribute('aria-label','Buka Misi 5 Pakar Simetri');document.getElementById('progress').textContent='🪞 Destinasi 5 / 6';document.getElementById('status').textContent='🔓 Misi 5 dibuka! Klik checkpoint Pakar Simetri.'}
+function lockFifth(){const b=document.querySelector('[data-stop="5"]');b.classList.add('locked');b.classList.remove('unlocked');b.setAttribute('aria-label','Misi 5 Pakar Simetri berkunci')}
+function p5target(){return new Set(p5tasks[p5idx].left.map(([r,c])=>r+','+(7-c)))}
+function openMission5(){veil.hidden=true;p4.hidden=true;p5.hidden=false;p5idx=0;document.getElementById('p5reward').hidden=true;renderP5()}
+function renderP5(){p5selected=new Set();p5done=false;document.getElementById('p5round').textContent='🪞 Cermin '+(p5idx+1)+' / 3';document.getElementById('p5task').textContent=p5tasks[p5idx].emoji+' Lengkapkan corak: '+p5tasks[p5idx].name;document.getElementById('p5next').hidden=true;document.getElementById('p5board').hidden=false;document.querySelectorAll('#p5hint,#p5clear').forEach(b=>b.hidden=false);document.getElementById('p5feedback').textContent='Pilih petak kanan yang sepadan dengan petak kiri.';drawP5()}
+function drawP5(){const ns='http://www.w3.org/2000/svg',svg=p5board;svg.replaceChildren();const left=new Set(p5tasks[p5idx].left.map(p=>p.join(',')));const target=p5target();function el(tag,attrs){let e=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));svg.appendChild(e);return e}el('rect',{x:0,y:0,width:420,height:336,rx:16,fill:'#f7fff9'});for(let r=0;r<6;r++)for(let c=0;c<8;c++){const key=r+','+c,filled=c<4?left.has(key):p5selected.has(key),x=18+c*48,y=22+r*48;const cell=el('rect',{x,y,width:44,height:44,rx:8,fill:filled?(c<4?'#f5b65f':'#84cbbb'):(c<4?'#f4ead7':'#ffffff'),stroke:c<4?'#c8bda4':'#a6caba','stroke-width':2});if(c>=4&&!p5done){cell.style.cursor='pointer';cell.setAttribute('role','button');cell.setAttribute('aria-label','Petak baris '+(r+1)+' lajur '+(c+1));cell.addEventListener('click',()=>{if(p5selected.has(key))p5selected.delete(key);else p5selected.add(key);const correct=[...p5selected].filter(k=>target.has(k)).length;const wrong=[...p5selected].filter(k=>!target.has(k)).length;document.getElementById('p5feedback').textContent='🧩 '+correct+' / '+target.size+' petak tepat'+(wrong?' · '+wrong+' petak perlu diperiksa':'');if(p5selected.size===target.size&&wrong===0){p5done=true;document.getElementById('p5feedback').textContent='🌟 Hebat! Kedua-dua bahagian sepadan seperti imej cermin.';document.getElementById('p5next').hidden=false;document.getElementById('p5next').textContent=p5idx===2?'🏅 Terima lencana':'Corak seterusnya →'}drawP5()})}}el('line',{x1:210,y1:10,x2:210,y2:322,stroke:'#c25e8c','stroke-width':4,'stroke-dasharray':'10 7'});const t=el('text',{x:210,y:333,'text-anchor':'middle','font-size':10,fill:'#a34c74'});t.textContent='PAKSI SIMETRI'}
+document.getElementById('p5hint').addEventListener('click',()=>{if(p5done)return;const target=p5target();const missing=[...target].find(k=>!p5selected.has(k));if(missing){p5selected.add(missing);document.getElementById('p5feedback').textContent='💡 Aina membantu mengisi satu petak. Cuba sambung sendiri!';if(p5selected.size===target.size&&[...p5selected].every(k=>target.has(k))){p5done=true;document.getElementById('p5next').hidden=false}drawP5()}else document.getElementById('p5feedback').textContent='Semak semula petak yang tidak sepadan.'});
+document.getElementById('p5clear').addEventListener('click',()=>{p5selected.clear();p5done=false;document.getElementById('p5next').hidden=true;document.getElementById('p5feedback').textContent='Cuba lagi!';drawP5()});
+document.getElementById('p5next').addEventListener('click',()=>{if(p5idx<2){p5idx++;renderP5()}else{p5board.hidden=true;document.querySelectorAll('#p5hint,#p5clear').forEach(b=>b.hidden=true);document.getElementById('p5next').hidden=true;document.getElementById('p5reward').hidden=false;document.getElementById('p5feedback').textContent='';document.getElementById('p5round').textContent='🏅 Misi 5 selesai';document.getElementById('status').textContent='🏅 Misi 5 Pakar Simetri selesai!';mission6Unlocked=true;unlockSixth()}});
+document.getElementById('p5exit').addEventListener('click',()=>{p5.hidden=true});
+document.getElementById('p5finish').addEventListener('click',()=>{p5.hidden=true;document.getElementById('status').textContent='🏅 Misi 5 selesai! Misi 6 Master Penyelesaian Masalah akan datang.'});
+
+
+// Misi 6: penyelesaian masalah kontekstual berdasarkan prisma, poligon dan simetri.
+const p6=document.getElementById('mission6');let p6idx=0,p6answered=false;
+const p6tasks=[
+ {scene:'🏕️ 📦 🥫',story:'Aina mahu membina khemah yang mempunyai dua hujung berbentuk segi tiga.',question:'Bentuk 3D manakah paling sesuai untuk reka bentuk khemah itu?',choices:['Kubus','Prisma segi tiga','Silinder'],answer:1,explain:'Prisma segi tiga mempunyai dua permukaan hujung berbentuk segi tiga.'},
+ {scene:'🌷 ⬟ 🌷',story:'Comel ingin membuat papan tanda taman yang mempunyai lima sisi lurus dan lima bucu.',question:'Poligon manakah perlu dipilih?',choices:['Segi tiga (3 sisi)','Segi empat (4 sisi)','Segi lima (5 sisi)'],answer:2,explain:'Segi lima ialah poligon yang mempunyai lima sisi lurus dan lima bucu.'},
+ {scene:'🦋 🪞 🌿',story:'Aina melukis separuh sayap rama-rama di sebelah kiri paksi simetri menegak.',question:'Bagaimanakah dia perlu melukis bahagian kanan supaya coraknya simetri?',choices:['Salin bentuk dengan kedudukan yang sama tanpa membalikkan','Lukis imej cermin pada jarak yang sama dari paksi','Lukis corak rawak pada sebelah kanan'],answer:1,explain:'Imej cermin perlu mempunyai bentuk dan jarak yang sepadan pada kedua-dua sisi paksi simetri.'}
+];
+function unlockSixth(){const b=document.querySelector('[data-stop="6"]');b.classList.remove('locked');b.classList.add('unlocked');b.setAttribute('aria-label','Buka Misi 6 Master Penyelesaian Masalah');document.getElementById('progress').textContent='🏆 Destinasi 6 / 6';document.getElementById('status').textContent='🔓 Misi 6 dibuka! Klik checkpoint terakhir pada peta.'}
+function lockSixth(){const b=document.querySelector('[data-stop="6"]');b.classList.add('locked');b.classList.remove('unlocked');b.setAttribute('aria-label','Misi 6 Master Penyelesaian Masalah berkunci')}
+function openMission6(){veil.hidden=true;p5.hidden=true;p6.hidden=false;p6idx=0;document.getElementById('p6reward').hidden=true;renderP6()}
+function renderP6(){p6answered=false;const t=p6tasks[p6idx];document.getElementById('p6round').textContent='🏆 Cabaran '+(p6idx+1)+' / 3';if(p6idx===1){document.getElementById('p6scene').innerHTML='<span aria-label="Bunga">🌷</span> <svg role="img" aria-label="Segi lima dengan lima sisi dan lima bucu" viewBox="0 0 100 100" width="74" height="74" style="vertical-align:middle;margin:0 18px;overflow:visible"><polygon points="50,7 92,38 76,89 24,89 8,38" fill="#f6e8b9" stroke="#315249" stroke-width="5" stroke-linejoin="round"/></svg> <span aria-label="Bunga">🌷</span>';}else{document.getElementById('p6scene').textContent=t.scene;}document.getElementById('p6story').textContent=t.story;document.getElementById('p6question').textContent=t.question;document.getElementById('p6feedback').textContent='Pilih jawapan yang paling sesuai.';document.getElementById('p6next').hidden=true;const c=document.getElementById('p6choices');c.innerHTML='';c.hidden=false;document.getElementById('p6scene').hidden=false;document.getElementById('p6story').hidden=false;document.getElementById('p6question').hidden=false;t.choices.forEach((choice,i)=>{const b=document.createElement('button');b.textContent=choice;b.addEventListener('click',()=>{if(p6answered)return;if(i===t.answer){p6answered=true;document.getElementById('p6feedback').textContent='🌟 Betul! '+t.explain;[...c.children].forEach(x=>x.disabled=true);b.style.background='#d4f3d9';document.getElementById('p6next').hidden=false;document.getElementById('p6next').textContent=p6idx===2?'🏆 Terima Lencana Master':'Cabaran seterusnya →'}else{document.getElementById('p6feedback').textContent='💛 Belum tepat. Fikirkan ciri bentuk yang diperlukan dan cuba lagi.'}});c.appendChild(b)})}
+document.getElementById('p6next').addEventListener('click',()=>{if(!p6answered)return;if(p6idx<2){p6idx++;renderP6()}else{['p6scene','p6story','p6question','p6choices','p6next'].forEach(id=>document.getElementById(id).hidden=true);document.getElementById('p6feedback').textContent='';document.getElementById('p6reward').hidden=false;document.getElementById('p6round').textContent='🎉 6 / 6 Misi selesai';document.getElementById('progress').textContent='🏆 AR-Geo lengkap!';finishedAll=true;refreshMapNext();document.getElementById('status').textContent='🎉 Tahniah! Semua enam misi telah diselesaikan.'}});
+document.getElementById('p6exit').addEventListener('click',()=>{p6.hidden=true});
+document.getElementById('p6finish').addEventListener('click',()=>{p6.hidden=true;document.getElementById('status').textContent='🏆 Tahniah! Aina dan Comel berjaya menamatkan pengembaraan AR-Geo.'});
+
+
+// LANGKAH 12: Simpan checkpoint yang telah dibuka pada peranti ini.
+// Kemajuan di tengah-tengah sesuatu misi tidak disimpan; hanya checkpoint lengkap.
+const saveKey='argeo_checkpoint_v12';
+const saveInfo=document.getElementById('saveInfo');
+let suppressSaving=false,restoring=false;
+function currentLevel(){return mission6Unlocked?6:mission5Unlocked?5:mission4Unlocked?4:mission3Unlocked?3:mission2Unlocked?2:1}
+function storeCheckpoint(){
+ if(suppressSaving||restoring)return;
+ const level=currentLevel();
+ try{localStorage.setItem(saveKey,JSON.stringify({level,finished:finishedAll}));
+ saveInfo.textContent='💾 Disimpan pada pelayar ini · Checkpoint '+level+' / 6'+(finishedAll?' · Semua misi selesai':'');
+ }catch(e){saveInfo.textContent='⚠️ Pelayar ini tidak membenarkan simpanan. Kemajuan mungkin hilang selepas ditutup.'}
+}
+function restoreCheckpoint(){
+ let data=null;try{data=JSON.parse(localStorage.getItem(saveKey)||'null')}catch(e){}
+ if(!data||!Number.isInteger(data.level)||data.level<2||data.level>6){storeCheckpoint();return}
+ restoring=true;
+ matchingDone=true;solved=[true,true,true];arDone=true;
+ if(data.level>=2){mission2Unlocked=true;unlockSecond()}
+ if(data.level>=3){mission3Unlocked=true;unlockThird()}
+ if(data.level>=4){mission4Unlocked=true;unlockFourth()}
+ if(data.level>=5){mission5Unlocked=true;unlockFifth()}
+ if(data.level>=6){mission6Unlocked=true;unlockSixth()}
+ finishedAll=Boolean(data.finished)&&data.level===6;
+ if(finishedAll)document.getElementById('progress').textContent='🏆 AR-Geo lengkap!';refreshMapNext();
+ status.textContent=finishedAll?'🏆 Selamat kembali! Semua misi telah diselesaikan.':'🌟 Selamat kembali! Checkpoint Misi '+data.level+' telah dibuka. Klik pada peta untuk meneruskan.';
+ restoring=false;storeCheckpoint();refreshMapNext();
+}
+const saveObserver=new MutationObserver(()=>{if(!suppressSaving&&!restoring)storeCheckpoint();refreshMapNext()});
+for(const node of document.querySelectorAll('[data-stop]'))saveObserver.observe(node,{attributes:true,attributeFilter:['class']});
+const progressObserver=new MutationObserver(()=>{
+ if(document.getElementById('progress').textContent.includes('AR-Geo lengkap')){finishedAll=true;storeCheckpoint()}
+});
+progressObserver.observe(document.getElementById('progress'),{childList:true,characterData:true,subtree:true});
+document.getElementById('reset').addEventListener('click',()=>{
+ suppressSaving=true;finishedAll=false;
+ try{localStorage.removeItem(saveKey)}catch(e){}
+ saveInfo.textContent='🧭 Kemajuan dipadam. Pengembaraan bermula semula.';
+ setTimeout(()=>{suppressSaving=false;storeCheckpoint()},200);
+},true);
+restoreCheckpoint();
+// Pulihkan kedudukan penanda, bukan hanya status checkpoint.
+try{
+ const savedLocation=localStorage.getItem('argeo_map_location_v2');
+ const last=savedLocation===null?0:Number(savedLocation);
+ const maxReached=mission6Unlocked?6:mission5Unlocked?5:mission4Unlocked?4:mission3Unlocked?3:mission2Unlocked?2:1;
+ if(Number.isInteger(last)&&last>=0&&last<=6&&((last<=maxReached)||(last===0))){
+  mapPosition=last;
+  traveler.style.transition='none';
+  traveler.style.left=arGeoStops[last][0]+'%';
+  traveler.style.top=arGeoStops[last][1]+'%';
+  refreshMapNext();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{traveler.style.transition='left 2.8s ease-in-out,top 2.8s ease-in-out'}));
+ }
+}catch(e){}
+
+})();
+</script>
+<div id="arGeoMenuOverlay" hidden>
+ <section class="arGeoSheet" aria-label="Menu pilihan permainan">
+  <div class="arGeoMenuHead"><h2 id="arGeoMenuTitle">Pilih Permainan</h2><button id="arGeoMenuBack">← Kembali ke Peta</button></div>
+  <p>Pilih cabaran yang hendak dimainkan. Selesaikan semua cabaran untuk mendapatkan lencana.</p>
+  <div class="arGeoBar"><div id="arGeoBarFill"></div></div><p id="arGeoMenuProgress"></p>
+  <div id="arGeoTiles" class="arGeoTiles"></div>
+  <p id="arGeoMenuReward">🔒 Lencana masih berkunci.</p>
+  <button id="arGeoClaim" class="arGeoAction" hidden>🏅 Ambil Lencana & Kembali ke Peta</button>
+ </section>
+</div>
+<div id="arGeoFinalOverlay" hidden style="position:fixed;inset:0;z-index:10010;background:rgba(27,64,52,.68);display:grid;place-items:center;padding:18px;overflow:auto">
+ <section style="max-width:580px;width:100%;padding:32px 26px;border-radius:28px;background:#fffaf0;border:4px solid #e9c986;box-shadow:0 18px 50px #0003;text-align:center;font-family:'Nunito',sans-serif;color:#315b50">
+  <div style="font-size:62px">🏆🌟🏅</div>
+  <h2 style="font-family:'Kalam',cursive;font-size:35px;margin:10px 0"><span id="arGeoFinalNamed">Tahniah, Master Geometri!</span></h2>
+  <p style="font-size:19px;line-height:1.6">Kamu berjaya menyelesaikan <strong>semua 6 misi pengembaraan AR-Geo!</strong></p>
+  <p style="font-size:17px">Aina dan Comel bangga dengan usaha kamu. Teruskan meneroka dunia geometri!</p>
+  <button id="arGeoShowCertificate" style="padding:14px 24px;border:0;border-radius:16px;background:#d8e9da;color:#234e41;font:700 17px Nunito,sans-serif;cursor:pointer">🏆 Lihat Sijil Saya</button><button id="arGeoFinalBack" style="padding:14px 24px;border:0;border-radius:16px;background:#cfe8ff;color:#234b70;font:700 17px 'Nunito',sans-serif;cursor:pointer">🗺️ Kembali ke Peta Pengembaraan</button>
+ </section>
+</div>
+<div id="arGeoActivityOverlay" hidden>
+ <section class="arGeoSheet">
+  <div class="arGeoMenuHead"><h3 id="arGeoActivityTitle"></h3><button id="arGeoActivityBack">← Menu Permainan</button></div>
+  <p id="arGeoActivityNote">Selesaikan aktiviti hingga berjaya. Kemudian kembali ke menu untuk merekodkan kemajuan.</p>
+  <iframe id="arGeoActivityFrame" title="Aktiviti AR-Geo" loading="lazy"></iframe>
+  <p><button class="arGeoAction" id="arGeoActivityConfirm">✓ Saya sudah berjaya menyelesaikan aktiviti ini</button></p>
+ </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+const missionTitles={1:'Peneroka Bentuk',2:'Detektif Prisma',3:'Penyiasat Prisma',4:'Pereka Poligon',5:'Pakar Simetri',6:'Master Penyelesaian Masalah'};
+const sets={
+ 1:[['Cabaran 1 · Cari Pasangan Saya','builtin1'],['Cabaran 2 · Peti Misteri','builtin2'],['Cabaran 3 · Teroka Prisma 3D','builtin3']],
+ 2:[['Cabaran 1 · Kubus Merah','detect0'],['Cabaran 2 · Kuboid Turquoise','detect1'],['Cabaran 3 · Prisma Segi Tiga','detect2']],
+ 3:Array.from({length:8},(_,i)=>['Cabaran '+(i+1),'unit3-aktiviti'+(i+1)+'.html']),
+ 4:[['Cabaran 1 · Jom Kenali Poligon!','unit4-aktiviti1.html'],['Cabaran 2 · Bina Poligon Sendiri!','unit4-aktiviti2.html'],['Cabaran 3 · Detektif Sisi dan Bucu','unit4-aktiviti3.html'],['Cabaran 4 · Poligon atau Bukan Poligon?','unit4-aktiviti4.html'],['Cabaran 5 · Cabaran Pereka Poligon','unit4-aktiviti5.html'],['Cabaran 6 · Uji Diri Pereka Poligon','unit4-aktiviti6.html']],
+ 5:Array.from({length:6},(_,i)=>['Cabaran '+(i+1),'unit5-aktiviti'+(i+1)+'.html']),
+ 6:Array.from({length:6},(_,i)=>['Cabaran '+(i+1),'unit6-aktiviti'+(i+1)+'.html'])
+};
+let activeMission=1,activeGame=-1,allowOriginal=false;
+const $=id=>document.getElementById(id);
+const menu=$('arGeoMenuOverlay'),activity=$('arGeoActivityOverlay');
+document.addEventListener('argeo:completed',e=>{const {mission,game}=e.detail;if(mission!==1&&mission!==2)return;const arr=done(mission);if(!arr.includes(game))arr.push(game);save(mission,arr);openMenu(mission)});
+function key(n){return 'argeo_menu_v1_m'+n}
+function done(n){try{return JSON.parse(localStorage.getItem(key(n))||'[]')}catch(e){return []}}
+function save(n,a){try{localStorage.setItem(key(n),JSON.stringify(a))}catch(e){}}
+function hidePanels(){['game','mystery','arGame','detective','mission3','mission4','mission5','mission6'].forEach(id=>{const el=$(id);if(el)el.hidden=true})}
+function openMenu(n){activeMission=n;$('veil').hidden=true;hidePanels();activity.hidden=true;menu.hidden=false;render()}
+function render(){
+ const list=sets[activeMission], completed=done(activeMission);
+ $('arGeoMenuTitle').textContent='🎮 Misi '+activeMission+': '+missionTitles[activeMission];
+ $('arGeoMenuProgress').textContent='Kemajuan: '+list.filter((x,i)=>completed.includes(i)).length+' / '+list.length+' permainan';
+ $('arGeoBarFill').style.width=(100*list.filter((x,i)=>completed.includes(i)).length/list.length)+'%';
+ $('arGeoTiles').replaceChildren();
+ list.forEach(([name,ref],i)=>{
+  const b=document.createElement('button');b.className='arGeoTile'+(completed.includes(i)?' done':'');
+  const title=document.createElement('strong');title.textContent='🎲 '+name;
+  const state=document.createElement('small');state.textContent=completed.includes(i)?'✓ Selesai':'Belum selesai';
+  b.append(title,state);b.addEventListener('click',()=>launch(i));$('arGeoTiles').appendChild(b);
+ });
+ const all=list.every((x,i)=>completed.includes(i));
+ $('arGeoMenuReward').textContent=all?'🏅 Semua permainan selesai! Lencana boleh dituntut.':'🔒 Lencana masih berkunci sehingga semua permainan selesai.';
+ $('arGeoClaim').hidden=!all;
+}
+function launch(i){
+ activeGame=i;
+ const [name,ref]=sets[activeMission][i];
+ menu.hidden=true;
+ if(ref.startsWith('detect')){document.dispatchEvent(new CustomEvent('argeo:launchDetect',{detail:{index:Number(ref.slice(-1))}}));return;}
+ if(ref.startsWith('builtin')){
+  allowOriginal=true;
+  if(ref==='builtin1')$('play').click();
+  else if(ref==='builtin2'){$('play').click()}
+  else if(ref==='builtin3'){$('play').click()}
+  else if(ref==='builtin4'){$('play').click()}
+  allowOriginal=false;
+  return;
+ }
+ $('arGeoActivityTitle').textContent='Misi '+activeMission+' · '+name;
+ $('arGeoActivityNote').textContent='Selesaikan cabaran. Setelah berjaya, kemajuan akan direkodkan secara automatik.';
+ if(activeMission>=4){arGeoU4Reported.delete(activeGame)}
+ $('arGeoActivityFrame').src=ref;
+ activity.hidden=false;
+}
+function mark(){if(activeGame<0)return;const arr=done(activeMission);if(!arr.includes(activeGame))arr.push(activeGame);save(activeMission,arr);activity.hidden=true;$('arGeoActivityFrame').src='about:blank';menu.hidden=false;render()}
+document.getElementById('reset').addEventListener('click',()=>{for(let i=1;i<=6;i++)try{localStorage.removeItem(key(i))}catch(e){};menu.hidden=true;activity.hidden=true;});
+$('arGeoMenuBack').addEventListener('click',()=>{menu.hidden=true;});
+$('arGeoActivityBack').addEventListener('click',()=>{activity.hidden=true;$('arGeoActivityFrame').src='about:blank';menu.hidden=false;render()});
+// Receive verified success from the activity inside the iframe, including Safari file pages.
+const arGeoU4Reported=new Set();
+window.addEventListener('message',function(event){
+ if(event.source!==$('arGeoActivityFrame').contentWindow)return;
+ const msg=event.data;
+ if(!msg||msg.type!=='argeo:activity:success'||!Number.isInteger(msg.activity))return;
+ if(activeMission!==msg.mission||activeGame!==msg.activity)return;
+ arGeoU4Reported.add(msg.activity);
+ $('arGeoActivityNote').textContent='✅ Tahniah! Cabaran berjaya. Kembali ke menu pilihan cabaran.';
+ mark();
+});
+$('arGeoActivityConfirm').addEventListener('click',function(){
+ if(activeMission>=4 && !arGeoU4Reported.has(activeGame)){
+  if(activeMission>=5){$('arGeoActivityNote').textContent='🔒 Selesaikan aktiviti dahulu sehingga mesej tahniah muncul. Kemajuan akan direkodkan secara automatik.';return;}
+  // Semakan pada halaman aktiviti sendiri: status kejayaan dihantar terus melalui mesej.
+  try{const child=$('arGeoActivityFrame').contentWindow;if(child&&child.document&&child.document.body){const evidence=child.localStorage;}}catch(e){}
+  let value=null;const keys=['argeo_u4a1_score','argeo_u4a2_progress','argeo_u4a3_progress','argeo_unit4_aktiviti4','argeo_unit4_aktiviti5','argeo_unit4_uji_diri'];
+  try{value=localStorage.getItem(keys[activeGame])}catch(e){}
+  let passed=false;
+  if(activeGame===0)passed=Number(value)===3;
+  else if(activeGame===1)passed=Number(value)>=3;
+  else if(activeGame===2)passed=Number(value)>=3;
+  else if(value){try{const result=JSON.parse(value);passed=!!result.completed && result.score>=Math.ceil(result.total*0.7)}catch(e){}}
+  if(!passed){$('arGeoActivityNote').textContent='🔒 Selesaikan cabaran dengan berjaya dahulu. Untuk Uji Diri, capai sekurang-kurangnya 70% jawapan betul. Kemajuan belum disahkan.';return}
+ }
+ if(activeMission===3){
+  const k=activeGame+1;
+  const evidenceKeys=['argeo_unit3_observation','argeo_u3a2_done','argeo_u3a3_done','argeo_u3a4_done','argeo_u3a5_done','argeo-u3-aktiviti6','argeo-u3-aktiviti7','argeo_unit3_uji_diri'];
+  let evidence=null;try{evidence=localStorage.getItem(evidenceKeys[activeGame])}catch(e){}
+  if(!evidence){$('arGeoActivityNote').textContent='🔒 Selesaikan aktiviti ini dahulu. Kemajuan belum dapat disahkan.';return}
+  if(k===8){let score=0;try{score=JSON.parse(evidence).score}catch(e){};if(score<7){$('arGeoActivityNote').textContent='🔒 Uji Diri memerlukan sekurang-kurangnya 7/10 jawapan betul. Cuba lagi.';return}}
+ }
+ mark();
+});
+$('arGeoClaim').addEventListener('click',()=>{
+ if(!sets[activeMission].every((x,i)=>done(activeMission).includes(i)))return;
+ menu.hidden=true;
+ if(activeMission===1)document.dispatchEvent(new Event('argeo:claim1'));
+ if(activeMission===2)document.dispatchEvent(new Event('argeo:claim2'));
+ if(activeMission===3)document.dispatchEvent(new Event('argeo:claim3'));
+ if(activeMission===4)document.dispatchEvent(new Event('argeo:claim4'));
+ if(activeMission===5)document.dispatchEvent(new Event('argeo:claim5'));
+ if(activeMission===6)document.dispatchEvent(new Event('argeo:claim6'));
+ // Original progression is retained for other missions pending integration.
+ const status=$('status');status.textContent='🏅 Semua aktiviti Misi '+activeMission+' selesai! Kembali ke peta.';
+});
+const play=$('play');
+document.addEventListener('click',function(e){if(e.target!==play)return;const match=($('dialogTitle').textContent||'').match(/Misi\s*([2-6])/i);if(!match||$('veil').hidden)return;e.stopPropagation();e.preventDefault();openMenu(Number(match[1]));},true);
+play.addEventListener('click',function(e){
+ if(allowOriginal)return;
+ // Intro popups are opened at arrival; show menu instead of opening first game directly.
+ const title=$('dialogTitle').textContent;
+ const match=title.match(/Misi\s*([1-6])/i);
+ if(match){
+  e.stopImmediatePropagation();e.preventDefault();
+  openMenu(Number(match[1]));
+ }
+},true);
+$('arGeoFinalBack').addEventListener('click',()=>{$('arGeoFinalOverlay').hidden=true;refreshMapNext()});
+window.arGeoOpenMenu=openMenu;
+})();
+</script>
+<div id="arGeoWelcome" hidden role="dialog" aria-modal="true" aria-labelledby="arGeoWelcomeTitle"><section class="arGeoIdentityCard">
+<img src="banner-aina-comel-ar.png" alt="Aina dan Comel"/><h2 id="arGeoWelcomeTitle">Selamat Datang ke Misi AR-Geo!</h2>
+<p>Hai, pengembara kecil! Aina dan Comel sudah bersedia. Siapakah nama kamu?</p>
+<label for="arGeoNameInput"><strong>Nama Pengembara</strong></label>
+<input id="arGeoNameInput" maxlength="40" autocomplete="off" placeholder="Taip nama panggilan kamu"/>
+<p id="arGeoWelcomePreview" aria-live="polite">Nama kamu akan muncul pada sijil pengembaraan.</p>
+<button id="arGeoWelcomeStart" disabled>🌟 Jom Mula Pengembaraan!</button>
+<p style="font-size:12px">Gunakan nama panggilan sahaja. Nama disimpan pada pelayar peranti ini, bukan dihantar ke internet.</p>
+</section></div>
+<div id="arGeoCertificate" hidden role="dialog" aria-modal="true" aria-labelledby="arGeoCertTitle"><section class="arGeoIdentityCard">
+<div style="font-size:54px">🏆 🌟 🏅</div><h2 id="arGeoCertTitle">Sijil Penghargaan AR-Geo</h2><p>Dengan bangganya dianugerahkan kepada</p>
+<div id="arGeoCertName"></div><p>kerana berjaya menyelesaikan <strong>keenam-enam misi AR-Geo</strong></p>
+<h2>Master Geometri!</h2><p>Teruskan meneroka dunia geometri bersama Aina dan Comel.</p>
+<button id="arGeoCertPrint" type="button">🖨️ Cetak / Simpan PDF</button><button id="arGeoCertClose" type="button">🗺️ Kembali ke Peta</button>
+</section></div><script>
+(function(){
+const welcome=document.getElementById('arGeoWelcome'),nameInput=document.getElementById('arGeoNameInput'),start=document.getElementById('arGeoWelcomeStart');
+const cert=document.getElementById('arGeoCertificate'),certName=document.getElementById('arGeoCertName');
+const key='argeo_nama_pengembara_v1';
+function getName(){try{return(localStorage.getItem(key)||'').trim()}catch(e){return window.arGeoNameFallback||''}}
+function setName(name){window.arGeoNameFallback=name;try{localStorage.setItem(key,name)}catch(e){}}
+function update(){const name=nameInput.value.trim();start.disabled=!name;document.getElementById('arGeoWelcomePreview').textContent=name?'Hai, '+name+'! Jom mulakan pengembaraan! 🌟':'Nama kamu akan muncul pada sijil pengembaraan.'}
+nameInput.addEventListener('input',update);
+nameInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!start.disabled)start.click()});
+start.addEventListener('click',()=>{const name=nameInput.value.trim();if(!name)return;setName(name);welcome.hidden=true;document.getElementById('arGeoGreeting').textContent='🌟 Pengembara: '+name});
+const existing=getName();if(existing){document.getElementById('arGeoGreeting').textContent='🌟 Pengembara: '+existing}else{welcome.hidden=false;nameInput.focus()}
+const final=document.getElementById('arGeoFinalOverlay');
+const observer=new MutationObserver(()=>{if(!final.hidden){const name=getName()||'Pengembara Hebat';document.getElementById('arGeoFinalNamed').textContent='Tahniah, '+name+'!';certName.textContent=name;}});
+observer.observe(final,{attributes:true,attributeFilter:['hidden']});
+document.getElementById('arGeoShowCertificate').addEventListener('click',()=>{certName.textContent=getName()||'Pengembara Hebat';cert.hidden=false});
+document.getElementById('arGeoCertClose').addEventListener('click',()=>{cert.hidden=true;final.hidden=true});
+document.getElementById('arGeoCertPrint').addEventListener('click',()=>window.print());
+})();
+</script></body></html>

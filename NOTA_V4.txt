@@ -1,0 +1,1 @@
+V4: Kamera sebagai latar belakang kawasan belon, bukan bulatan menutup belon. Butang kamera kekal di kanan. Perkataan Magical Balloon Garden dalam ilustrasi asal ditutup secara CSS, bukan dibuang daripada imej sumber. Uji sentuhan dan kamera melalui HTTPS.

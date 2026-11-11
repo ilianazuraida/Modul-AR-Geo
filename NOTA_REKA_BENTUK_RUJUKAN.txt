@@ -1,0 +1,1 @@
+Menu menggunakan potongan tepat bahagian atas imej rujukan pengguna; permainan menggunakan imej rujukan kedua sebagai latar sebenar. Lapisan soalan dan pilihan jawapan dibina interaktif. Kamera/MediaPipe memerlukan HTTPS dan internet. Sila uji pengesanan isyarat pada peranti sebenar. Makmal AR, Misi AR-Geo dan Kuiz dikekalkan daripada ZIP asas.

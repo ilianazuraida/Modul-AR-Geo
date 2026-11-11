@@ -1,0 +1,1 @@
+Paparan permainan dibina daripada ilustrasi rujukan yang diluluskan. Label jawapan kini berubah mengikut soalan; nombor tidak muncul pada soalan bentuk 3D. Interaksi kamera ialah pratonton sahaja, bukan sensor tangan. Gunakan HTTPS untuk kamera. Belon Misteri boleh diselesaikan melalui butang sentuhan.

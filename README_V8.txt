@@ -1,0 +1,1 @@
+V8: Buka balloon-pop.html. Tiada foto murid dalam reka bentuk. Kamera sebenar hanya muncul selepas diaktifkan. Sentuhan/klik dan animasi POP disediakan. Sensor MediaPipe memerlukan HTTPS/localhost dan ujian pada peranti sebenar.

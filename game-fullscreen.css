@@ -1,0 +1,123 @@
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;font-family:system-ui,"Trebuchet MS",sans-serif;background:#b7eafa;color:#072d69} .stage{position:relative;width:100vw;min-height:100vh;overflow:hidden;background-position:center;background-repeat:no-repeat;background-size:cover} .menu{background-image:url(menu-fullscreen.jpg);background-size:100% 100%} .play{background-image:url(pop-fullscreen.png);background-size:100% 100%} .hot{position:absolute;cursor:pointer;border:0;background:transparent;border-radius:22px;z-index:3} .hot:focus-visible{outline:5px solid #ffdd48;outline-offset:2px} .hot:hover{box-shadow:inset 0 0 0 4px #fff9} .mhome{left:1%;top:2%;width:17%;height:13%}.m1{left:33%;top:43%;width:19%;height:53%}.m2{left:52.5%;top:43%;width:20%;height:53%}.m3{left:73%;top:43%;width:21%;height:53%}.back{left:1%;top:2%;width:20%;height:11%}.camera{right:1%;top:65%;width:16%;height:11%}.touch{right:1%;top:76%;width:16%;height:11%} .answers{position:absolute;inset:0;pointer-events:none}.answer{position:absolute;top:57%;height:32%;width:17%;border:0;background:transparent;cursor:pointer;pointer-events:auto;border-radius:50%;z-index:5}.answer:nth-child(1){left:30%}.answer:nth-child(2){left:46%}.answer:nth-child(3){left:63%}.answer:focus-visible{outline:5px solid gold}.answer:disabled{cursor:default}.ans-label{position:absolute;top:86%;width:15%;height:7%;background:#fffdf5;border-radius:25px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(13px,2.1vw,34px);font-weight:900;z-index:4;box-shadow:0 3px 4px #3333}.ans-label:nth-of-type(1){left:31%}.ans-label:nth-of-type(2){left:47%}.ans-label:nth-of-type(3){left:64%} .question{position:absolute;left:33%;top:34%;width:39%;height:15%;background:#fffdf4;border-radius:35px;display:flex;align-items:center;justify-content:center;text-align:center;padding:1%;font-size:clamp(15px,2.05vw,34px);font-weight:900;z-index:4}.progress{position:absolute;left:43%;top:30%;width:15%;height:5%;display:grid;place-items:center;border-radius:25px;background:#e9c1f5;font-weight:900;font-size:clamp(11px,1.15vw,20px);z-index:5}.score{position:absolute;right:2%;top:3%;width:17%;height:7%;display:grid;place-items:center;background:#fff9e9;border-radius:25px;font-size:clamp(13px,1.8vw,28px);font-weight:900;z-index:5}.toast{position:absolute;bottom:3%;left:32%;width:36%;padding:10px 20px;text-align:center;background:#fff9e9;border:3px solid #ddab67;border-radius:24px;z-index:8;font-size:clamp(12px,1.5vw,24px);font-weight:800}.next{position:absolute;bottom:3%;left:40%;width:20%;z-index:10;border:3px solid #d88a31;border-radius:25px;background:#ffdd73;color:#10356b;padding:10px;font-size:clamp(12px,1.5vw,24px);font-weight:900;cursor:pointer}.hidden{display:none!important}.overlay{position:absolute;inset:0;background:#122b4788;display:grid;place-items:center;z-index:20}.dialog{background:#fffaf0;border:6px solid white;border-radius:36px;padding:30px;max-width:570px;width:90%;text-align:center;box-shadow:0 12px 30px #0004}.dialog h2{color:#7933a1}.dialog button{border:0;border-radius:20px;background:#ffce61;padding:15px 28px;font-weight:900;font-size:18px;cursor:pointer}.dialog .choice{margin:5px;background:#cdefff}.camview{position:absolute;right:1%;top:43%;width:17%;height:20%;object-fit:cover;border:4px solid white;border-radius:20px;z-index:6}.status{position:absolute;right:1%;top:90%;width:20%;padding:6px;background:#fff9e9;border-radius:10px;font-size:12px;z-index:7}.code{font-size:40px;font-weight:900;color:#9a25a1;letter-spacing:3px}@media(max-aspect-ratio:4/3){.stage{min-height:650px}.question{font-size:17px}.ans-label{font-size:15px}.toast{font-size:13px}}
+/* Pembetulan: imej menu kekal pada nisbah asal (1536 x 492). */
+.stage.menu {
+  background-image: url('watercolor-menu-backdrop.jpg');
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu-art {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1536 / 492;
+  flex: 0 0 auto;
+  background: url('menu-fullscreen.jpg') center / 100% 100% no-repeat;
+  box-shadow: 0 12px 36px #245d7444;
+}
+.menu .hot { z-index: 5; }
+.menu .mhome {left:1%;top:2%;width:17%;height:17%}
+.menu .m1 {left:33%;top:43%;width:19%;height:53%}
+.menu .m2 {left:52.5%;top:43%;width:20%;height:53%}
+.menu .m3 {left:73%;top:43%;width:21%;height:53%}
+/* Video di tengah latar permainan, bukan di tepi.
+   Butang kamera kekal di sebelah kanan. */
+.play .camview {
+  left: 37%;
+  right: auto;
+  top: 48%;
+  width: 29%;
+  height: 39%;
+  border: 0;
+  border-radius: 28px;
+  opacity: .53;
+  object-fit: cover;
+  transform: scaleX(-1);
+  z-index: 2;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 45%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, black 45%, transparent 75%);
+}
+.play .camera,.play .touch {z-index: 7}
+.play .answers {z-index: 5}
+.play .ans-label {z-index: 6}
+.play .status {z-index: 8}
+
+/* V3: wajah jelas dan belon benar-benar boleh disentuh */
+.play .camview {left:38%;top:52%;width:25%;height:34%;opacity:1;z-index:6;border:3px solid #fff9;border-radius:48%;mask-image:none;-webkit-mask-image:none;box-shadow:0 0 0 4px #fff6,0 5px 22px #143a5666;}
+.play .answers {z-index:10;pointer-events:none}
+.play .answer {z-index:11;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.play .ans-label {z-index:12;pointer-events:none;}
+.play .ans-label# a0 {left:31%}
+.play #a0 {left:31%;}.play #a1 {left:47%;}.play #a2 {left:64%;}
+.play .answer.popped {animation:balloonPop .5s ease-out forwards;}
+@keyframes balloonPop {0%{transform:scale(1);background:#ffffff00}35%{transform:scale(1.1);background:#fff9d06b;box-shadow:0 0 0 6px #ffdd66a8}100%{transform:scale(.25);opacity:0;}}
+.play .answer:active {box-shadow:inset 0 0 0 5px #ffe66b99;}
+.play .status {z-index:14}
+.play .toast {z-index:15;bottom:11%;}
+.play .next {z-index:16;bottom:3%}
+
+/* V4: video kamera sebagai latar kawasan permainan, bukan tingkap bulat. */
+.play .camview{left:28%;top:45%;width:52%;height:46%;right:auto;opacity:.48;z-index:2;border:0;border-radius:0;box-shadow:none;object-fit:cover;transform:scaleX(-1);mask-image:linear-gradient(to bottom,transparent 0%,black 12%,black 84%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 12%,black 84%,transparent 100%);pointer-events:none}
+.play .answers{z-index:7;pointer-events:none}
+.play .answer{z-index:8;pointer-events:auto}
+.play .ans-label{z-index:9;pointer-events:none}
+.play .question,.play .progress{z-index:10}
+/* Tutup subjudul bahasa Inggeris yang tercetak dalam ilustrasi asal dengan papan neutral. */
+.play:before{content:'';position:absolute;left:33%;top:31.7%;width:39%;height:3.4%;background:#f9eac7;border-radius:18px;z-index:3;pointer-events:none}
+
+/* V6: preserve original illustrated scene, legible camera as a background layer */
+.play{background-image:url('pop-fullscreen.png');background-size:100% 100%}
+.play .camview{left:31%;top:43%;width:47%;height:49%;opacity:.78;z-index:3;border:0;border-radius:20px;box-shadow:none;object-fit:cover;transform:scaleX(-1);pointer-events:none;mask-image:linear-gradient(to bottom,transparent 0%,black 14%,black 88%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 14%,black 88%,transparent 100%)}
+.play .answers{z-index:7}.play .answer{z-index:8;touch-action:manipulation}.play .question,.play .progress{z-index:10}
+.play .hand-cursor{position:absolute;width:34px;height:34px;border:4px solid #ffe04d;background:#fffc;border-radius:50%;z-index:16;pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 0 5px #174b9c88;display:none}
+.play .answer.hand-hover{box-shadow:inset 0 0 0 7px #fff6a6,0 0 20px #ffdf5b;animation:handpulse .7s infinite alternate}
+@keyframes handpulse{to{box-shadow:inset 0 0 0 11px #ffe079,0 0 26px #fff0a3}}
+.play .sensor-status{position:absolute;right:1%;bottom:2%;width:23%;z-index:17;background:#fff9ebed;padding:8px;border-radius:12px;font-size:clamp(10px,1vw,15px);font-weight:700}
+.play .answer.popped{animation:balloonPop .5s ease-out forwards}
+@keyframes balloonPop{0%{transform:scale(1)}40%{transform:scale(1.12);background:#fff7a377}100%{transform:scale(.2);opacity:0}}
+
+/* V38: menu watercolor baru; koordinat hotspot sejajar kad yang dilukis. */
+.stage.menu{background-image:url('watercolor-menu-backdrop.jpg')}
+.stage.menu .menu-art{aspect-ratio:1555/1012;background-image:url('dunia-permainan-watercolor-aina-senyum.png');background-size:100% 100%;}
+.stage.menu .mhome{left:1.2%;top:4%;width:22%;height:13%;}
+.stage.menu .m1{left:32%;top:44%;width:21.5%;height:37%;}
+.stage.menu .m2{left:54%;top:44%;width:22.5%;height:37%;}
+.stage.menu .m3{left:77%;top:44%;width:22%;height:37%;}
+
+/* Menu Dunia Permainan V38: ilustrasi baharu dan kawasan sentuh sepadan. */
+.stage.menu {background-size:cover;}
+.stage.menu .menu-art {aspect-ratio:1536 / 1024;max-height:100vh;width:min(100vw,150vh);background-size:100% 100%;}
+.stage.menu .mhome {left:1%;top:4%;width:26%;height:19%;}
+.stage.menu .m1 {left:29%;top:44%;width:23%;height:41%;}
+.stage.menu .m2 {left:52%;top:44%;width:24%;height:41%;}
+.stage.menu .m3 {left:76%;top:44%;width:23%;height:41%;}
+
+/* FINAL FIX: menu baharu memenuhi keseluruhan viewport tanpa ruang kosong. */
+html,body{height:100%;overflow:hidden;}
+.stage.menu{width:100vw;height:100vh;height:100dvh;min-height:0;display:block;overflow:hidden;background:none;}
+.stage.menu .menu-art{position:absolute;inset:0;width:100%;height:100%;max-height:none;aspect-ratio:auto;flex:none;box-shadow:none;background-image:url('dunia-permainan-watercolor-aina-senyum.png');background-position:center;background-size:100% 100%;background-repeat:no-repeat;}
+.stage.menu .mhome{left:1.5%;top:4%;width:25%;height:20%;}
+.stage.menu .m1{left:29.2%;top:44%;width:22.8%;height:41%;}
+.stage.menu .m2{left:52.5%;top:44%;width:22.8%;height:41%;}
+.stage.menu .m3{left:76.2%;top:44%;width:22.8%;height:41%;}
+
+/* V38 menu: invisible hit areas, no focus rectangles or hover borders. */
+.stage.menu .hot,.stage.menu .hot:hover,.stage.menu .hot:focus,.stage.menu .hot:focus-visible,.stage.menu .hot:active{outline:none!important;border:0!important;box-shadow:none!important;background:transparent!important;-webkit-tap-highlight-color:transparent!important;}
+.stage.menu .menu-art{background-image:url("dunia-permainan-watercolor-aina-senyum.png")!important;background-size:100% 100%!important;}
+
+/* Dunia Permainan: artwork 16:9 terkini; hotspots aligned to illustrated buttons. */
+.stage.menu .menu-art{background-image:url("dunia-permainan-watercolor-aina-senyum.png")!important;background-size:100% 100%!important;}
+.stage.menu .mhome{left:1%;top:4%;width:27%;height:20%;}
+.stage.menu .m1{left:28.3%;top:45%;width:22.5%;height:43%;}
+.stage.menu .m2{left:51.4%;top:45%;width:23.3%;height:43%;}
+.stage.menu .m3{left:75%;top:45%;width:24%;height:43%;}
+
+/* Dunia Permainan: gambar rujukan terkini, hotspot tanpa tindihan. */
+.stage.menu .menu-art{background-image:url('dunia-permainan-watercolor-aina-senyum.png');}
+.stage.menu .mhome{left:3.4%;top:9%;width:22%;height:17%;}
+.stage.menu .msound{left:81%;top:7%;width:8%;height:14%;}
+.stage.menu .mhome2{left:90%;top:7%;width:9%;height:14%;}
+.stage.menu .m1{left:25.5%;top:45%;width:24%;height:42%;}
+.stage.menu .m2{left:49.5%;top:45%;width:24.5%;height:42%;}
+.stage.menu .m3{left:74%;top:45%;width:24.5%;height:42%;}

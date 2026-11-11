@@ -1,0 +1,1 @@
+Versi asas: V38. Pembetulan terhad: kawasan kamera diperluas agar merangkumi ketiga-tiga belon. Susun atur grafik V38 dikekalkan. Ilustrasi Comel belum diubah; perlu aset grafik baharu untuk membetulkan anggota secara kemas. Uji sensor melalui HTTPS (GitHub Pages), bukan file://.

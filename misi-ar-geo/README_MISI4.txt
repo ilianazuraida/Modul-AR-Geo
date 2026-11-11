@@ -1,0 +1,1 @@
+Misi 4: 6 cabaran asal dikekalkan. Status disahkan menggunakan bukti localStorage setiap aktiviti. Cabaran 1 skor 3/3; Cabaran 2/3 tiga tahap; Cabaran 4/5/6 sekurang-kurangnya 70%. Lencana Misi 4 membuka NEXT Misi 5. Font asal dikekalkan. Ujian sintaks diluluskan; ujian Safari belum dijalankan.

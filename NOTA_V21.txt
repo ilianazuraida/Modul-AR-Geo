@@ -1,0 +1,1 @@
+V21: Susun atur soalan dipusatkan pada awan. Fail asal dan fungsi sensor V20 dikekalkan. Ilustrasi Comel masih menggunakan aset V20; kedua-dua tapak kaki Comel memang terdapat pada ilustrasi asal di kanan. Ujian sensor kamera sebenar diperlukan.

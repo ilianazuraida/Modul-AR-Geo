@@ -1,0 +1,1 @@
+V10: Reka bentuk asal pop-fullscreen.png dikekalkan sebagai latar penuh. Kamera sebenar muncul hanya selepas diaktifkan. Klik/sentuh belon, lima soalan, bonus, dan kod POP-182 menggunakan logik pop-v8.js. Pengesanan tangan MediaPipe memerlukan internet dan HTTPS/localhost, belum diuji pada Safari sebenar.

@@ -1,0 +1,1 @@
+Paparan menu menggunakan ilustrasi watercolor penuh dengan hotspot interaktif. Paparan permainan menggunakan latar taman bersih tanpa teks/soalan/belon terbakar dalam gambar. Kamera memerlukan HTTPS. Gerakan tangan belum diuji pada peranti sebenar.

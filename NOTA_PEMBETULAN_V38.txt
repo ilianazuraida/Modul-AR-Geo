@@ -1,0 +1,1 @@
+V38 pembetulan: paparan 3D embedded tidak lagi memuat profil modal; butang keluar AR kembali ke menu cabaran; progress membaca checkpoint JSON per profil; lencana 1-6 dipaparkan; avatar object-fit contain. Data profil sedia ada tidak dipadam. Uji Safari dengan fail diekstrak.

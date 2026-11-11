@@ -1,0 +1,1 @@
+V18: Susun atur pilihan di tengah, butang kanan, markah kanan atas. Pengesanan jari kini menggunakan koordinat X dan Y pada kawasan video (belum diuji pada peranti sebenar). Soalan/jawapan dirandom tanpa paksa kedudukan Kon. Kod rahsia POP-182 dikekalkan. Ilustrasi Aina/Comel masih daripada artwork V17 asal; perubahan posisi watak memerlukan aset ilustrasi berlapis.

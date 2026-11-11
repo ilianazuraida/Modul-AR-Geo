@@ -1,0 +1,1 @@
+Tujuh kad web menggunakan ilustrasi baharu dengan susunan tanpa pertindihan. Penanda AR sebenar menggantikan corak ilustrasi dalam petak yang sama, bukan lapisan besar di atas Aina/Comel. Imbasan AR perlu diuji pada HTTPS dengan peranti sebenar.

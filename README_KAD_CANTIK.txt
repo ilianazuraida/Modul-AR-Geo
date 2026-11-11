@@ -1,0 +1,1 @@
+Kad watercolor baharu berdasarkan ilustrasi Aina dan Comel. Penanda visual dalam ilustrasi digantikan dengan fail PNG penanda sebenar sedia ada. Cetak pada A5 100%. Pengesanan AR memerlukan ujian kamera sebenar melalui HTTPS. Bahagian Teroka 3D dan misi tidak diubah.

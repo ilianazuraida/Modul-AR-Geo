@@ -1,0 +1,173 @@
+<!doctype html><html lang="ms"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AR-Geo Treasure Hunt — Pulau Interaktif</title><script src="treasure-firebase-config.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script><style>
+@font-face{font-family:TreasureHand;src:url('treasure-font-offline.otf') format('opentype');font-display:swap}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#8bc8e9;color:#342346;font-family:TreasureHand,'Comic Sans MS',cursive}body{display:grid;place-items:center}.wrap{position:relative;width:min(100vw,177.7778dvh);aspect-ratio:16/9;overflow:hidden;background:#a9d7f5;container-type:inline-size}canvas{position:absolute;inset:0;width:100%;height:100%;display:block}button{font:inherit;cursor:pointer;touch-action:none}button:focus-visible{outline:3px solid #ffcf4c;outline-offset:3px}
+.banner{position:absolute;z-index:3;left:31.5%;top:.3%;width:40%;height:14%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#fff9f1;border:.45cqw solid white;border-radius:48% 52% 47% 53%/42% 48% 52% 58%;filter:drop-shadow(0 .35cqw 0 #ed9dbd);transform:rotate(-1deg)}.banner:after{content:'';position:absolute;left:5%;right:5%;bottom:4%;height:32%;border-radius:48%;background:#f5afc5;z-index:-1}.banner strong{font-size:2.8cqw;line-height:1.05;color:#1c3154;white-space:nowrap}.banner small{font-size:1.45cqw;line-height:1.2;color:#382449;font-weight:700}
+.hud,.missions{position:absolute;top:2%;z-index:4;background:#fff9edfa;border:.18cqw solid #a97b9c;border-radius:2cqw;padding:.65cqw 1.05cqw;font-size:1.55cqw;line-height:1.35;box-shadow:0 .18cqw 0 #dfb2c8}.hud{left:1.2%;width:29%}.hud small{display:block;font-size:.9cqw}.missions{right:1.1%;width:22%;font-size:1.37cqw}.missions b{display:block;text-align:center;background:#f5bed1;border-radius:60%;font-size:1.65cqw}.missions div{margin:.25cqw 0}
+.back,.action,.controls button{border:.28cqw solid #fff8ff;background:linear-gradient(#bc78d8,#8b40b6);color:#fff;border-radius:2.5cqw;box-shadow:0 .32cqw 0 #713a8c;font-weight:800}.back{position:absolute;left:1.3%;top:15%;z-index:5;padding:.65cqw 1.25cqw;font-size:1.9cqw}.tag{position:absolute;left:1.9%;top:23%;z-index:4;background:#fff8e8;border:.12cqw solid #c69bb4;border-radius:1cqw;padding:.3cqw .6cqw;font-size:.95cqw}
+.location{position:absolute;z-index:3;transform:translate(-50%,-50%);padding:.5cqw 1.1cqw;background:#fff7e6f5;border:.2cqw solid #a8799c;border-radius:48% 52% 45% 55%/42% 48% 52% 58%;color:#36234b;font-size:1.85cqw;font-weight:800;text-align:center;line-height:1.07;min-width:13cqw;pointer-events:none;box-shadow:0 .18cqw 0 #d9b08b}.location.locked{opacity:1}
+.controls{position:absolute;left:1.4%;bottom:2%;z-index:5;width:14%;display:grid;grid-template-columns:repeat(3,1fr);gap:.3cqw}.controls button{font-size:2.5cqw;aspect-ratio:1.15;padding:0;border-radius:1.4cqw}.controls .empty{visibility:hidden}.action{position:absolute;right:1.2%;bottom:2.3%;z-index:5;font-size:2.5cqw;padding:1.2cqw 2.4cqw}.notice{position:absolute;z-index:4;left:27%;width:47%;bottom:2.1%;padding:.7cqw;background:#fff8e8f7;border:.18cqw solid #bf91a8;border-radius:3cqw;text-align:center;font-size:1.45cqw;font-weight:800;white-space:nowrap}
+.modal{position:absolute;inset:0;z-index:20;background:#22152bba;display:none;place-items:center;padding:2%}.modal.show{display:grid}.panel{width:min(90%,580px);max-height:90%;overflow:auto;padding:20px;text-align:center;background:#fff9e8;border:4px solid #a36bcc;border-radius:20px;font-size:clamp(14px,1.5cqw,22px)}.options{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}.options button,.close{border:2px solid white;border-radius:18px;background:#9452bc;color:white;padding:10px 16px;font-size:18px}
+
+/* Final reference artwork: original typography and signs, kept as separate overlay assets. */
+.banner{left:30.48%;top:0;width:41.35%;height:15.12%;border:0;background:transparent;box-shadow:none;filter:none;transform:none;border-radius:0}
+.banner:after{display:none}.banner strong,.banner small{visibility:hidden}
+.banner{background:url('treasure-exact-title.png') center/100% 100% no-repeat}
+.location{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;text-shadow:none!important;padding:0!important;border-radius:0!important;min-width:0!important;line-height:1!important;font-size:0!important;opacity:1!important}
+.location[style*="left:32%"]{left:31.29%!important;top:47.33%!important;width:15.11%!important;height:10.67%!important;background:url('treasure-exact-bridge.png') center/100% 100% no-repeat!important}
+.location[style*="left:58%"]{left:57.68%!important;top:32.76%!important;width:18.65%!important;height:8.20%!important;background:url('treasure-exact-cave.png') center/100% 100% no-repeat!important}
+.location[style*="left:86%"]{left:84.98%!important;top:50.20%!important;width:18.07%!important;height:10.28%!important;background:url('treasure-exact-chest.png') center/100% 100% no-repeat!important}
+.back{left:.96%;top:13.44%;width:12.35%;height:7.51%;padding:0;background:url('treasure-exact-back.png') center/100% 100% no-repeat;border:0;box-shadow:none;color:transparent;font-size:0;border-radius:0}
+.action{left:79.94%;right:auto;bottom:2.37%;width:19.36%;height:14.13%;padding:0;background:url('treasure-exact-action.png') center/100% 100% no-repeat;border:0;box-shadow:none;color:transparent;font-size:0;border-radius:0}
+.notice{left:25.59%;bottom:4.55%;width:47.07%;height:8.30%;padding:0;background:url('treasure-exact-notice.png') center/100% 100% no-repeat;border:0;box-shadow:none;color:transparent;font-size:0;border-radius:0;overflow:hidden}
+.hud{left:1.2%;top:2%;width:29%;}.missions{right:1.1%;top:2%;width:22%}
+/* Do not place active control labels on top of the source illustration. */
+
+/* V3 final polish: precise illustrated reference, independent interactive elements. */
+.banner{top:.2%;height:14.7%;background-size:contain;background-position:center}
+.missions{right:1.1%;top:1.8%;width:21.6%;padding:.65cqw 1cqw .75cqw;border-radius:1.9cqw;background:#fffaf0;box-shadow:0 .15cqw 0 #e2bdcc;font-size:1.37cqw}
+.missions b{background:#f6c1d4;border-radius:54% 46% 48% 52% / 56% 50% 50% 44%;font-size:1.65cqw;letter-spacing:.02em;padding:.15cqw .2cqw;margin-bottom:.35cqw}
+.missions:after{content:'✦';position:absolute;right:-.45cqw;top:-.6cqw;color:#ffa61c;font-size:2.1cqw;transform:rotate(20deg)}
+.notice{bottom:4.2%;height:6.3%;background-size:100% 100%;overflow:visible}
+.action{bottom:2.7%;height:12.8%;background-size:contain}
+.hud{font-size:1.65cqw}.hud small{font-size:1cqw}
+@media(max-aspect-ratio:4/3){.wrap{width:100vw}}
+
+/* PULAU REKA BAHARU — all readable labels are live HTML, not cropped screenshots */
+.banner,.banner strong,.banner small,.location,.back,.action,.notice{background-image:none!important;color:#362748!important;font-size:inherit!important;visibility:visible!important;opacity:1!important}
+.banner{left:29.2%!important;top:1.1%!important;width:42%!important;height:14.5%!important;background:linear-gradient(155deg,#fff9f3 10%,#ffe5ed 100%)!important;border:.35cqw solid #fff!important;outline:.17cqw solid #d78eb7!important;border-radius:52% 48% 47% 53% / 48% 55% 45% 52%!important;box-shadow:0 .35cqw 0 #cc8ab5!important;transform:rotate(-1deg)!important;filter:none!important}
+.banner:after{display:block!important;background:#f4b4d3!important;bottom:0!important;height:22%!important}
+.banner strong{font-size:2.8cqw!important;color:#273b63!important;line-height:1.02!important;white-space:nowrap}
+.banner small{font-size:1.45cqw!important;color:#623d65!important}
+.hud,.missions{background:linear-gradient(145deg,#fffdf2f5,#fff0eaf5)!important;border:.2cqw solid #b989ae!important;box-shadow:0 .25cqw 0 #d6abc1,0 .3cqw 1cqw #6e477433!important;border-radius:1.8cqw!important}
+.hud{left:1.2%!important;top:1.6%!important;width:27%!important;font-size:1.45cqw!important;padding:.75cqw!important}.hud small{font-size:1.03cqw!important}
+.missions{right:1.2%!important;top:1.6%!important;width:21.5%!important;font-size:1.35cqw!important;padding:.7cqw!important}.missions b{font-size:1.6cqw!important;background:#f4c4dc!important}
+.location{transform:translate(-50%,-50%)!important;background:linear-gradient(160deg,#fffaf1,#fbe6d4)!important;border:.25cqw solid #a87ca9!important;box-shadow:0 .28cqw 0 #c79f85!important;color:#4b3151!important;text-shadow:none!important;border-radius:43% 57% 48% 52% / 51% 43% 57% 49%!important;font-size:1.52cqw!important;line-height:1.04!important;padding:.6cqw .9cqw!important;min-width:12cqw!important;width:auto!important;height:auto!important;white-space:normal!important}
+.location[style*="left:32%"]{left:31.5%!important;top:46%!important}.location[style*="left:58%"]{left:58%!important;top:32%!important}.location[style*="left:86%"]{left:85%!important;top:49%!important}
+.location.locked{background:linear-gradient(160deg,#fff8ed,#e9dbe9)!important}
+.back,.action{background:linear-gradient(160deg,#b77ad7,#8448ad)!important;border:.25cqw solid #fff6fb!important;box-shadow:0 .28cqw 0 #683885!important;color:white!important;border-radius:2cqw!important;font-weight:900!important;text-shadow:0 .1cqw #5e317b!important}
+.back{left:1.5%!important;top:15.5%!important;width:auto!important;height:auto!important;padding:.65cqw 1.2cqw!important;font-size:1.6cqw!important}
+.action{left:auto!important;right:1.4%!important;bottom:3%!important;width:auto!important;height:auto!important;padding:1cqw 2.2cqw!important;font-size:2.3cqw!important}
+.notice{left:25%!important;bottom:3.5%!important;width:49%!important;height:auto!important;padding:.8cqw 1cqw!important;background:#fffaf0f5!important;border:.2cqw solid #b78eaa!important;box-shadow:0 .2cqw 0 #d9b8c3!important;border-radius:3cqw!important;font-size:1.4cqw!important;overflow:visible!important;white-space:normal!important}
+.tag{top:25%!important}.controls{bottom:2.5%!important}
+.panel{font-family:TreasureHand,'Comic Sans MS',cursive;background:linear-gradient(#fffdf1,#fbe4ef);border:5px solid #a77cc2;border-radius:32px;box-shadow:0 15px 50px #23153677}.panel h2{font-size:1.8em}.options button{background:linear-gradient(#b778d6,#8145ac);min-width:130px}.options button:hover,.close:hover,.action:hover{filter:brightness(1.1)}
+
+/* V38 tested legibility: use the same bundled handwritten font for every live control. */
+.hud,.missions,.banner,.banner strong,.banner small,.location,.back,.action,.notice,.panel,.panel button,.controls button{font-family:TreasureHand,'Comic Sans MS',cursive!important}
+.hud,.missions{background:#fff9efed!important;border:2px solid #b889ad!important;box-shadow:0 3px 0 #d9b3c6!important}
+.missions div{line-height:1.23;overflow-wrap:anywhere}
+.notice{white-space:normal!important;display:flex!important;align-items:center;justify-content:center;line-height:1.12!important}
+.panel button{font-weight:800}
+
+
+/* Rebuilt from the user's approved illustration: real artwork assets, no duplicated text. */
+.banner,.location,.back,.action,.notice,.controls,.missions{background:none!important;border:0!important;box-shadow:none!important;filter:none!important;transform:none!important;border-radius:0!important;padding:0!important;color:transparent!important;text-shadow:none!important;opacity:1!important}
+.banner:after{display:none!important}.banner strong,.banner small{visibility:hidden!important}
+.banner{left:30%!important;top:0%!important;width:44%!important;height:15%!important;background:url('ref-title.png') center/contain no-repeat!important}
+.location{font-size:0!important;line-height:0!important;min-width:0!important;pointer-events:none!important}
+.location[style*="left:32%"]{left:23.3%!important;top:42.5%!important;width:16.3%!important;height:11%!important;background:url('ref-bridge.png') center/contain no-repeat!important}
+.location[style*="left:58%"]{left:48.2%!important;top:28%!important;width:18%!important;height:9%!important;background:url('ref-cave.png') center/contain no-repeat!important}
+.location[style*="left:86%"]{left:75.8%!important;top:45%!important;width:20%!important;height:11%!important;background:url('ref-chest.png') center/contain no-repeat!important}
+.back{left:0.7%!important;top:13%!important;width:15%!important;height:9%!important;font-size:0!important;background:url('ref-back.png') center/contain no-repeat!important}
+.action{right:1%!important;bottom:17.7%!important;width:19%!important;height:11%!important;font-size:0!important;background:url('ref-action.png') center/contain no-repeat!important}
+.notice{left:25%!important;bottom:17.7%!important;width:50%!important;height:9%!important;font-size:0!important;background:url('ref-notice.png') center/contain no-repeat!important;white-space:normal!important}
+.controls{left:1%!important;bottom:18%!important;width:16%!important;height:16%!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:0!important;background:url('ref-controls.png') center/100% 100% no-repeat!important}
+.controls button{opacity:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.hud{top:1.5%!important;left:1.3%!important;width:28.5%!important;min-height:10%!important;background:#fff8e9f5!important;border:.18cqw solid #b87d9f!important;border-radius:2.4cqw!important;color:#37213d!important;font-size:1.65cqw!important;padding:.6cqw .85cqw!important;box-shadow:0 .2cqw #e9b9c8!important}
+.hud small{font-size:1cqw!important}
+.missions{right:.8%!important;top:0%!important;width:23%!important;height:19%!important;background:url('ref-missions.png') center/100% 100% no-repeat!important;font-size:0!important}
+.missions>*{visibility:hidden!important}
+.tag{left:2%!important;top:22%!important}
+#refProgress{position:absolute;left:12.5%;top:82.5%;width:75%;height:10%;background:url('ref-progress.png') center/100% 100% no-repeat;z-index:4;pointer-events:none}
+#refBottom{position:absolute;left:0;bottom:0;width:100%;height:9.2%;background:url('ref-bottom.png') center/100% 100% no-repeat;z-index:5;pointer-events:none}
+#refBottom button{position:absolute;top:0;height:100%;border:0;background:transparent;color:transparent;pointer-events:auto;cursor:pointer}
+#refBottom button:nth-child(1){left:1%;width:18%}#refBottom button:nth-child(2){left:23%;width:16%}#refBottom button:nth-child(3){left:41%;width:18%}#refBottom button:nth-child(4){left:60%;width:16%}#refBottom button:nth-child(5){right:1%;width:20%}
+#missionState{position:absolute;left:40%;top:85.6%;z-index:6;font-size:1.15cqw;color:#332045;background:#fff9eced;border-radius:2cqw;padding:.1cqw .7cqw;pointer-events:none}
+#missionNotice{position:absolute;left:28%;bottom:26.2%;z-index:7;width:45%;text-align:center;font-size:1.15cqw;color:#482b43;pointer-events:none;display:none}
+
+/* FIX OVERLAP: remove legacy outlines and align art overlays to the approved layout. */
+.banner{outline:0!important;outline-offset:0!important;box-shadow:none!important;filter:none!important}
+.location[style*="left:32%"]{left:24.7%!important;top:43.2%!important;width:15.5%!important;height:9.4%!important}
+.location[style*="left:58%"]{left:49.3%!important;top:29.1%!important;width:17.7%!important;height:8.0%!important}
+.location[style*="left:86%"]{left:78.2%!important;top:46.0%!important;width:18.1%!important;height:9.0%!important}
+#missionState{display:none!important}
+#refProgress{top:83.2%!important;height:9.3%!important}
+#refBottom{height:8.9%!important}
+/* Keep controls clear of the progress bar. */
+.controls{bottom:18.6%!important}
+.notice{bottom:18.4%!important}
+.action{bottom:18.4%!important}
+</style><style id="pulau-functional-fixes">
+/* Keep the original illustrated island and buttons, with accessible live hit areas. */
+.location{pointer-events:auto!important;cursor:pointer!important;z-index:9!important}
+.location.locked{cursor:not-allowed!important}
+.location:not(.locked):hover,.location:not(.locked):focus-visible{filter:drop-shadow(0 0 12px #fff069)!important;outline:3px solid #ffd83d!important;outline-offset:2px!important;border-radius:25px!important}
+.notice{background:#fff9e9f0!important;border:2px solid #d6a6a9!important;border-radius:32px!important;left:29%!important;width:43%!important;bottom:18.8%!important;height:6.5%!important;font-size:1.28cqw!important;color:#432447!important;padding:.4cqw 1cqw!important;line-height:1.15!important;display:flex!important;text-align:center!important;justify-content:center!important;align-items:center!important;z-index:6!important}
+#refBottom button{z-index:20!important}
+#refBottom button:focus-visible{outline:3px solid #ffda37!important;border-radius:18px!important}
+#infoModal{z-index:50!important}
+</style></head><body><main class="wrap"><canvas id="world" width="1280" height="720" aria-label="Pulau Geometri interaktif"></canvas><div class="banner"><strong>AR-Geo Treasure Hunt</strong><small>Pengembaraan Pulau Geometri</small></div><div class="hud" id="hud"></div><div class="missions" id="missions"></div><div class="location" style="left:32%;top:48%">Jambatan<br>Poligon</div><div class="location locked" style="left:58%;top:33%">🔒 Gua Kristal</div><div class="location locked" style="left:86%;top:51%">🔒 Peti Harta Karun</div><a href="treasure-lobi.html"><button class="back">← Kembali</button></a><div class="tag"><span id="netStatus">Demo solo</span></div><div class="controls"><span class="empty"></span><button data-dir="up">▲</button><span class="empty"></span><button data-dir="left">◀</button><button data-dir="down">▼</button><button data-dir="right">▶</button></div><div class="notice" id="notice" aria-live="polite">Gerakkan avatar ke lokasi misi, kemudian tekan papan tanda untuk bermain.</div><div id="refProgress" aria-label="Kemajuan tiga misi"></div><div id="missionState" aria-live="polite">🔸 Misi 1 · 🔒 Misi 2 · 🔒 Misi 3</div><div id="refBottom"><button title="Tukar Pemain" onclick="location.href='treasure-hunt.html'">Tukar Pemain</button><button title="Lencana" onclick="showGamePanel('badge')">Lencana</button><button title="Pencapaian" onclick="showGamePanel('achievement')">Pencapaian</button><button title="Tetapan" onclick="showGamePanel('settings')">Tetapan</button><button title="Menu Utama" onclick="location.href='index.html'">Menu Utama</button></div><div class="modal" id="infoModal" role="dialog" aria-modal="true"><section class="panel"><h2 id="infoTitle"></h2><p id="infoBody"></p><button class="close" id="infoClose">Kembali ke Pulau</button></section></div><div class="modal" id="modal"><section class="panel"><h2 id="question"></h2><p id="detail"></p><div class="options" id="options"></div><p id="feedback" role="status"></p><button class="close" id="close">Tutup</button></section></div></main><script>
+const canvas=document.getElementById('world'),ctx=canvas.getContext('2d'),W=1280,H=720;let player={name:'Peneroka',avatar:0};try{player={...player,...JSON.parse(localStorage.getItem('arGeoTreasurePlayer')||'{}')}}catch(e){};
+try{const params=new URLSearchParams(location.search);if(params.has('player'))player.name=params.get('player').slice(0,20);if(params.has('avatar'))player.avatar=Math.max(0,Math.min(3,Number(params.get('avatar'))||0));}catch(e){};
+const names=['Aina','Amir','Sofia','Adam'],skin=['#f5c7a6','#e8b48d','#dca889','#f1c39d'],hair=['#6a3929','#493329','#47302d','#573a28'],shirt=['#f4e5c7','#6db5e2','#bd8bce','#8ec77d'];let x=230,y=520,dir=1,step=0,score=0,gems=0,done=[false,false,false],active=-1,walking=false;const keys=new Set();let held=null;
+// Kemajuan solo disimpan mengikut nama dan avatar pada pelayar ini.
+const progressKey='arGeoTreasureProgress:'+String(player.name).trim().toLowerCase()+':'+String(player.avatar);
+let storedProgress={};try{storedProgress=JSON.parse(localStorage.getItem(progressKey)||'{}')}catch(e){}
+if(Array.isArray(storedProgress.done)){done=[0,1,2].map(i=>!!storedProgress.done[i]);score=Number(storedProgress.score)||0; if(!Number.isFinite(score)||score<0)score=0}
+function saveProgress(){if(!roomRef)localStorage.setItem(progressKey,JSON.stringify({done,score}))}
+let facing='right';let remotePlayers={},ownUid='',roomRef=null,lastSync=0;const sites=[{x:390,y:510,title:'Jambatan Poligon',q:'Bentuk manakah mempunyai 5 sisi lurus?',opts:['Segi tiga','Pentagon','Heksagon'],correct:1},{x:755,y:340,title:'Gua Kristal',q:'Berapakah bilangan bucu bagi heksagon?',opts:['5','6','8'],correct:1},{x:1070,y:475,title:'Peti Harta Karun',q:'Bentuk manakah mempunyai 4 sisi sama panjang dan 4 sudut tegak?',opts:['Segi empat sama','Segi tiga','Pentagon'],correct:0}];
+function ellipse(cx,cy,rx,ry,c){ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);ctx.fill()};function line(points,c,w){ctx.strokeStyle=c;ctx.lineWidth=w;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();points.forEach(([a,b],i)=>i?ctx.lineTo(a,b):ctx.moveTo(a,b));ctx.stroke()};function txt(t,a,b,size=24,color='#4b2b48'){ctx.fillStyle=color;ctx.font=`bold ${size}px TreasureHand, 'Comic Sans MS', cursive`;ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#fff8e7';ctx.strokeText(t,a,b);ctx.fillText(t,a,b)};
+function palm(a,b,s=1){ctx.save();ctx.translate(a,b);ctx.scale(s,s);line([[0,0],[7,-58],[2,-112]],'#8a5a34',17);for(let i=0;i<7;i++){let an=i*Math.PI*2/7;ellipse(2+Math.cos(an)*39,-114+Math.sin(an)*22,41,12,'#3f9a54')}ctx.restore()};function flower(a,b){ellipse(a,b,12,12,'#ff92b6');for(let i=0;i<5;i++){let t=i*2*Math.PI/5;ellipse(a+Math.cos(t)*10,b+Math.sin(t)*10,8,7,'#ffb0c8')}ellipse(a,b,5,5,'#f5c747')};
+const mapImage=new Image();mapImage.src='treasure-pulau-latar-bersih.jpg';
+// Four selectable full-body walking avatars. Each has 4 directions and 4 steps.
+const spriteDirs=['front','right','back','left'];
+const sprites={};
+for(const direction of spriteDirs){sprites[direction]=Array.from({length:4},(_,avatar)=>Array.from({length:4},(_,frame)=>{const im=new Image();im.src=`treasure-polished-${avatar}-${direction}-${frame}.png`;return im}))}
+function character(a,b,index=0,anim=0,direction='right'){
+ const chosen=Math.max(0,Math.min(3,Number(index)||0));
+ const frames=sprites[direction]||sprites.right;
+ const frame=anim?Math.floor(Math.abs(anim)*2)%4:0;
+ const im=frames[chosen][frame];
+ ctx.fillStyle='#243d352c';ctx.beginPath();ctx.ellipse(a,b,19,5,0,0,Math.PI*2);ctx.fill();
+ if(im.complete&&im.naturalWidth){const h=126,w=h*im.naturalWidth/im.naturalHeight;ctx.drawImage(im,a-w/2,b-h,w,h)}
+}
+document.fonts.load('bold 22px TreasureHand').then(()=>{}).catch(()=>{});
+function render(){
+ ctx.clearRect(0,0,W,H);if(mapImage.complete&&mapImage.naturalWidth)ctx.drawImage(mapImage,0,0,W,H);
+ else {ctx.fillStyle='#b9e8fa';ctx.fillRect(0,0,W,H)}
+ // Only moving player sprites are rendered on the illustrated world; UI is separate HTML.
+ Object.entries(remotePlayers).forEach(([id,p])=>{if(id===ownUid)return;character(p.x||190,p.y||525,p.avatar||0,Math.sin(Date.now()/180),p.facing||'right');txt(String(p.name||'Rakan').slice(0,18),p.x||190,(p.y||525)-123,19)});
+ // Only the player avatar appears on the island.
+ character(x,y,player.avatar||0,walking?step:0,facing);txt(String(player.name).slice(0,18),x,y-123,19);
+ requestAnimationFrame(render)
+}
+function updateHUD(){document.getElementById('hud').innerHTML='🧭 '+String(player.name).replace(/[&<>"']/g,'').slice(0,18)+' · ⭐ '+score+' mata · 🔑 '+done.filter(Boolean).length+'/3<small>Gerak: kekunci anak panah / WASD / kawalan skrin</small>';document.getElementById('missions').innerHTML='<b>Misi Pasukan</b>'+sites.map((s,i)=>'<div>'+(done[i]?'✅':i&&!done[i-1]?'🔒':'🔸')+' '+s.title+'</div>').join('');document.querySelectorAll('.location').forEach((el,i)=>{el.classList.toggle('locked',i>0&&!done[i-1]);el.textContent=(done[i]?'✅ ':i>0&&!done[i-1]?'🔒 ':'')+sites[i].title});document.getElementById('missionState').textContent=sites.map((s,i)=>(done[i]?'✅':i&&!done[i-1]?'🔒':'🔸')+' Misi '+(i+1)).join(' · ');if(done.every(Boolean))document.getElementById('notice').textContent='🏆 Tahniah! Semua tiga misi Treasure Hunt selesai!'}
+function nearest(){let best=-1,d=1e9;sites.forEach((s,i)=>{let dd=Math.hypot(x-s.x,y-s.y);if(dd<d){d=dd;best=i}});return d<150?best:-1}
+function explore(){let i=nearest();if(i<0){document.getElementById('notice').textContent='Dekati jambatan, gua atau peti harta karun dahulu.';return}if(done[i]){document.getElementById('notice').textContent='Cabaran ini sudah selesai!';return}if(i>0&&!done[i-1]){document.getElementById('notice').textContent='Selesaikan lokasi sebelumnya dahulu.';return}if(i===0){location.href='treasure-jambatan.html';return}if(i===1){location.href='treasure-gua-kristal.html';return}if(i===2){location.href='treasure-peti-harta.html';return}active=i;const s=sites[i];document.getElementById('question').textContent=s.title;document.getElementById('detail').textContent=s.q;document.getElementById('feedback').textContent='';document.getElementById('close').textContent='Tutup';document.getElementById('options').innerHTML='';s.opts.forEach((o,j)=>{let b=document.createElement('button');b.textContent=o;b.onclick=()=>{if(j===s.correct){done[i]=true;score+=i===2?35:20;saveProgress();if(roomRef){roomRef.child('progress/done/'+i).set(true);roomRef.child('players/'+ownUid+'/score').set(score)}document.getElementById('feedback').textContent=i===2?'Tahniah! Harta karun berjaya dibuka!':'Betul! Kunci geometri berjaya diperoleh.';document.getElementById('options').innerHTML='';document.getElementById('close').textContent=i===2?'Selesai 🏆':'Teruskan ke misi seterusnya →';updateHUD()}else{document.getElementById('feedback').textContent='Belum tepat. Cuba lagi!'}};document.getElementById('options').append(b)});document.getElementById('modal').classList.add('show')}
+// Papan tanda aktif hanya apabila pemain menghampiri lokasi.
+const signElements=[...document.querySelectorAll('.location')];
+signElements.forEach((el,i)=>{el.setAttribute('role','button');el.setAttribute('tabindex','0');el.setAttribute('aria-label','Buka '+sites[i].title);el.addEventListener('click',()=>openSign(i));el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();openSign(i)}})});
+function openSign(i){
+ if(Math.hypot(x-sites[i].x,y-sites[i].y)>=150){document.getElementById('notice').textContent='Dekati '+sites[i].title+' dahulu untuk bermain.';return}
+ if(i>0&&!done[i-1]){document.getElementById('notice').textContent='🔒 Selesaikan misi sebelumnya dahulu.';return}
+ // Completed missions remain accessible for review; progress and rewards are not awarded again.
+ const pages=['treasure-jambatan.html','treasure-gua-kristal.html','treasure-peti-harta.html'];
+ window.location.href=pages[i];
+}
+function showGamePanel(which){
+ const completed=done.filter(Boolean).length;
+ const title=document.getElementById('infoTitle'),body=document.getElementById('infoBody');
+ if(which==='badge'){
+ title.textContent='🏅 Lencana Pengembara Geometri';
+ body.textContent=completed===3?'Tahniah! Semua tiga misi selesai. Lencana Pengembara Geometri berjaya diperoleh!':'Lencana masih terkunci. Selesaikan ketiga-tiga misi dahulu. Kemajuan: '+completed+'/3.';
+ }else if(which==='achievement'){
+ title.textContent='🏆 Pencapaian '+player.name;
+ body.textContent='Markah: '+score+' mata • Kunci: '+completed+'/3 • Misi selesai: '+(completed?sites.filter((_,i)=>done[i]).map(s=>s.title).join(', '):'Belum ada')+'.';
+ }else{
+ title.textContent='⚙️ Tetapan Permainan';
+ body.textContent='Kawalan: kekunci anak panah atau WASD, atau butang arah pada skrin. Gerakkan avatar berhampiran papan tanda sebelum menekannya. Kemajuan disimpan pada peranti dan pelayar ini.';
+ }
+ document.getElementById('infoModal').classList.add('show');
+}
+document.getElementById('infoClose').onclick=()=>document.getElementById('infoModal').classList.remove('show');
+document.getElementById('close').onclick=()=>document.getElementById('modal').classList.remove('show');function tick(){let dx=0,dy=0;if(keys.has('ArrowLeft')||keys.has('a')||held==='left')dx--;if(keys.has('ArrowRight')||keys.has('d')||held==='right')dx++;if(keys.has('ArrowUp')||keys.has('w')||held==='up')dy--;if(keys.has('ArrowDown')||keys.has('s')||held==='down')dy++;walking=!!(dx||dy)&&!document.getElementById('modal').classList.contains('show');if(dx<0)facing='left';else if(dx>0)facing='right';else if(dy<0)facing='back';else if(dy>0)facing='front';if(walking&&!document.getElementById('modal').classList.contains('show')){let m=Math.hypot(dx,dy);x=Math.max(70,Math.min(1190,x+dx/m*4));y=Math.max(145,Math.min(625,y+dy/m*4));step+=.25;if(roomRef&&Date.now()-lastSync>110){lastSync=Date.now();roomRef.child('players/'+ownUid).update({x:Math.round(x),y:Math.round(y),facing})}}setTimeout(tick,30)}window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();keys.add(e.key);if(e.key===' '&&!document.getElementById('modal').classList.contains('show')){let i=nearest();if(i>=0)openSign(i)}});window.addEventListener('keyup',e=>keys.delete(e.key));window.addEventListener('blur',()=>{keys.clear();held=null});document.querySelectorAll('[data-dir]').forEach(b=>{b.addEventListener('pointerdown',e=>{e.preventDefault();held=b.dataset.dir;b.setPointerCapture(e.pointerId)});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>held=null))});async function initMultiplayer(){const id=sessionStorage.getItem('arGeoTreasureRoom');if(!id||!window.AR_GEO_FIREBASE_CONFIG?.databaseURL)return;try{if(!window.firebase)throw Error('Tiada sambungan Firebase');firebase.initializeApp(window.AR_GEO_FIREBASE_CONFIG);const a=await firebase.auth().signInAnonymously();ownUid=a.user.uid;roomRef=firebase.database().ref('treasureRooms/'+id);const s=await roomRef.child('players/'+ownUid).once('value');if(!s.exists())throw Error('Pemain tidak berdaftar dalam pasukan');roomRef.child('players').on('value',s=>{remotePlayers=s.val()||{};document.getElementById('netStatus').textContent='Pasukan '+id+' · '+Object.keys(remotePlayers).length+'/4 pemain'});roomRef.child('progress/done').on('value',s=>{const arr=s.val()||{};for(let i=0;i<3;i++)done[i]=!!arr[i];updateHUD()});roomRef.child('players/'+ownUid).onDisconnect().remove()}catch(e){document.getElementById('netStatus').textContent='Sambungan gagal: '+e.message}}updateHUD();tick();render();initMultiplayer();
+</script></body></html>

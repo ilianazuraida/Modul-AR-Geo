@@ -1,0 +1,1 @@
+V12: Satu lapisan HTML bagi soalan dan jawapan. Imej latar disunting untuk menutup tulisan asal. Klik/sentuh belon berfungsi. Pengecaman tangan menggunakan MediaPipe memerlukan internet dan kamera melalui HTTPS/localhost serta ujian peranti sebenar. Kod rahsia POP-182 dikekalkan.

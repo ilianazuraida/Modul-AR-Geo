@@ -1,0 +1,1 @@
+Pembaikan: 7 fail penanda .patt berdasarkan corak kad PDF telah ditambah. Buka kamera-ar.html melalui GitHub Pages (HTTPS). Uji dengan kad bercetak, penanda rata, pencahayaan terang. Jika tidak dikesan, buka Developer Console dan semak ralat AR.js. Pengujian kamera pada telefon sebenar masih diperlukan.
